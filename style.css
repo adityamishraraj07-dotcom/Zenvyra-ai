@@ -1,0 +1,392 @@
+/* ================================
+   ZENVYRA AI — PREMIUM UI
+================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #080b12;
+  --panel: #10141d;
+  --panel-light: #171c27;
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #f5f7fb;
+  --muted: #9aa3b2;
+  --accent: #7c5cff;
+  --accent-light: #9b83ff;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+}
+
+
+/* ================================
+   SIDEBAR
+================================ */
+
+.sidebar {
+  width: 280px;
+  min-height: 100vh;
+  background: #0d1119;
+  border-right: 1px solid var(--border);
+  padding: 28px 20px;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 23px;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.brand-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c5cff, #a66cff);
+  color: white;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.new-chat {
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: var(--accent);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 28px;
+  transition: 0.2s;
+}
+
+.new-chat:hover {
+  background: var(--accent-light);
+  transform: translateY(-1px);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  min-height: 56px;
+  padding: 0 16px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: var(--panel-light);
+  color: white;
+}
+
+.nav-icon {
+  width: 30px;
+  text-align: center;
+  font-size: 23px;
+}
+
+
+/* ================================
+   MAIN
+================================ */
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 0 48px 60px;
+}
+
+.topbar {
+  min-height: 92px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar h2 {
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.topbar p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+
+/* ================================
+   HERO
+================================ */
+
+.hero {
+  max-width: 900px;
+  margin: 75px auto 55px;
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid rgba(124, 92, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.1);
+  color: #b7a8ff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+}
+
+.hero h1 {
+  margin-top: 24px;
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 1.08;
+  letter-spacing: -2px;
+}
+
+.hero h1 span {
+  display: block;
+  background: linear-gradient(90deg, #8b72ff, #c18cff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  max-width: 700px;
+  margin: 24px auto 0;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+
+/* ================================
+   FEATURE CARDS
+================================ */
+
+.features {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.feature-card {
+  min-height: 330px;
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.055),
+    rgba(255, 255, 255, 0.018)
+  );
+  transition: 0.25s;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124, 92, 255, 0.4);
+  background: linear-gradient(
+    145deg,
+    rgba(124, 92, 255, 0.11),
+    rgba(255, 255, 255, 0.025)
+  );
+}
+
+.feature-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(124, 92, 255, 0.13);
+  font-size: 30px;
+  margin-bottom: 25px;
+}
+
+.feature-card h3 {
+  font-size: 25px;
+  margin-bottom: 13px;
+}
+
+.feature-card p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+  min-height: 78px;
+}
+
+.feature-card button {
+  margin-top: 22px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 12px;
+  background: #202638;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.feature-card button:hover {
+  background: var(--accent);
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 800px) {
+
+  .app {
+    display: block;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    padding: 18px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand {
+    margin-bottom: 18px;
+    font-size: 21px;
+  }
+
+  .brand-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .new-chat {
+    min-height: 52px;
+    margin-bottom: 14px;
+  }
+
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+  }
+
+  .nav-item {
+    min-height: 58px;
+    padding: 7px 4px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    font-size: 12px;
+  }
+
+  .nav-icon {
+    font-size: 21px;
+    height: 25px;
+  }
+
+  .main {
+    padding: 0 16px 40px;
+  }
+
+  .topbar {
+    min-height: 76px;
+  }
+
+  .topbar h2 {
+    font-size: 20px;
+  }
+
+  .hero {
+    margin: 48px auto 40px;
+  }
+
+  .hero h1 {
+    font-size: clamp(38px, 11vw, 55px);
+    letter-spacing: -1.5px;
+  }
+
+  .hero p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .feature-card {
+    min-height: 300px;
+    padding: 25px;
+    border-radius: 19px;
+  }
+
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+
+  .feature-card h3 {
+    font-size: 23px;
+  }
+
+  .feature-card p {
+    font-size: 16px;
+  }
+
+  .feature-card button {
+    min-height: 50px;
+    width: 100%;
+    font-size: 16px;
+  }
+    }
