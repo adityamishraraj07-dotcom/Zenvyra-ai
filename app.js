@@ -113,3 +113,34 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
     };
   }
 }
+// ================= IMAGE GENERATOR LOGIC =================
+const generateImageBtn = document.getElementById("generateImageBtn");
+const imagePrompt = document.getElementById("imagePrompt");
+const imageUpload = document.getElementById("imageUpload");
+const imageResult = document.getElementById("imageResult");
+
+if (generateImageBtn) {
+  generateImageBtn.addEventListener("click", () => {
+    const promptText = imagePrompt ? imagePrompt.value.trim() : "";
+
+    if (!promptText && (!imageUpload || !imageUpload.files[0])) {
+      alert("Kripya image ka prompt likhein ya photo upload karein!");
+      return;
+    }
+
+    imageResult.innerHTML = `<span style="color: var(--accent);">✦ AI image generate ho rahi hai... Kripya intezar karein.</span>`;
+
+    // Free AI Image Generation API call (Pollinations)
+    const encodedPrompt = encodeURIComponent(promptText || "creative futuristic visual");
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=800&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
+
+    const img = new Image();
+    img.src = imageUrl;
+    img.onload = () => {
+      imageResult.innerHTML = `<img src="${imageUrl}" alt="Generated AI Artwork" style="width: 100%; max-width: 450px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" />`;
+    };
+    img.onerror = () => {
+      imageResult.innerHTML = `<span style="color: #ff5555;">Image generate karne me dikkat aayi. Dubara koshish karein.</span>`;
+    };
+  });
+}
