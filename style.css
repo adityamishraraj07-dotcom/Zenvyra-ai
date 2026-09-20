@@ -391,7 +391,7 @@ button {
   }
     }
 /* =================================
-   CHAT MESSAGES & COMPOSER
+   CHAT MESSAGES & COMPOSER FIX
 ==================================== */
 
 .chat-messages {
@@ -415,38 +415,45 @@ button {
   max-width: 80%;
   word-break: break-word;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  margin-top: 8px;
 }
 
-.composer-wrapper {
+.chat-composer {
   max-width: 900px;
-  margin: 20px auto 45px;
-  padding: 0 16px;
-}
-
-.composer {
-  display: flex;
-  align-items: center;
+  margin: 20px auto 40px;
+  padding: 14px;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 8px 12px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
-.composer textarea {
-  flex: 1;
+.chat-composer textarea {
+  width: 100%;
   background: transparent;
   border: none;
   color: var(--text);
   font-size: 16px;
   resize: none;
   outline: none;
-  min-height: 48px;
-  padding: 12px;
   font-family: inherit;
+  padding: 6px;
 }
 
-.composer button {
+.composer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.composer-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.chat-composer button {
   background: var(--accent);
   color: #ffffff;
   border: none;
@@ -456,10 +463,8 @@ button {
   font-size: 15px;
   cursor: pointer;
   transition: 0.2s;
-  min-height: 46px;
 }
 
-.composer button:hover {
+.chat-composer button:hover {
   background: var(--accent-light);
 }
-
