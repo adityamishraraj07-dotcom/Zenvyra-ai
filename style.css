@@ -38,7 +38,10 @@ button {
 .app {
   min-height: 100vh;
   display: flex;
+  width: 100%;
+  overflow-x: hidden;
 }
+
 
 
 /* ================================
@@ -134,8 +137,11 @@ button {
 .main {
   flex: 1;
   min-width: 0;
-  padding: 0 48px 60px;
+  padding: 0 24px 60px;
+  display: flex;
+  flex-direction: column;
 }
+
 
 .topbar {
   min-height: 92px;
