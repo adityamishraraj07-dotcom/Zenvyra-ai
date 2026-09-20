@@ -141,7 +141,7 @@ if (generateImageBtn) {
 
     const query = encodeURIComponent(promptText || "cyberpunk cinematic visual");
     const seed = Math.floor(Math.random() * 1000000);
-    const finalUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&nologo=true&seed=" + seed;
+    const finalUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&nologo=true&enhance=false&model=flux&seed=" + seed;
 
     const img = document.createElement("img");
     img.src = finalUrl;
