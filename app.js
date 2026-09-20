@@ -13,13 +13,18 @@ navItems.forEach((item) => {
 });
 const chatInput = document.getElementById("chatInput");
 const sendChat = document.getElementById("sendChat");
+const chatMessages = document.getElementById("chatMessages");
 
 sendChat.addEventListener("click", () => {
   const message = chatInput.value.trim();
 
   if (message === "") return;
 
-  console.log("User message:", message);
+  const messageElement = document.createElement("div");
+  messageElement.className = "user-message";
+  messageElement.textContent = message;
+
+  chatMessages.appendChild(messageElement);
 
   chatInput.value = "";
 });
