@@ -113,6 +113,8 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
     };
   }
 }
+
+}
 // ================= IMAGE GENERATOR LOGIC =================
 const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
@@ -124,11 +126,27 @@ if (generateImageBtn) {
     const promptText = imagePrompt ? imagePrompt.value.trim() : "";
 
     if (!promptText && (!imageUpload || !imageUpload.files[0])) {
-      alert("Kripya image ka prompt likhein ya photo upload karein!");
+      alert("Please enter an image prompt or upload a reference image!");
       return;
     }
 
-    imageResult.innerHTML = "✦ AI image generate ho rahi hai... Kripya intezar karein.";
+    let seconds = 0;
+    const startTime = Date.now();
+
+    imageResult.innerHTML = `
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <span style="color: var(--accent); font-weight: 500;">✦ Generating your AI artwork...</span>
+        <span id="imageTimer" style="color: var(--muted); font-size: 13px;">Time elapsed: 0s</span>
+      </div>
+    `;
+
+    const timerInterval = setInterval(() => {
+      seconds++;
+      const timerElement = document.getElementById("imageTimer");
+      if (timerElement) {
+        timerElement.textContent = `Time elapsed: ${seconds}s`;
+      }
+    }, 1000);
 
     const query = encodeURIComponent(promptText || "futuristic AI artwork");
     const seed = Math.floor(Math.random() * 1000000);
@@ -138,17 +156,24 @@ if (generateImageBtn) {
     img.src = finalUrl;
     img.alt = "Generated Artwork";
     img.style.width = "100%";
-    img.style.maxWidth = "400px";
+    img.style.maxWidth = "420px";
     img.style.borderRadius = "12px";
-    img.style.marginTop = "10px";
+    img.style.marginTop = "12px";
 
     img.onload = () => {
-      imageResult.innerHTML = "";
-      imageResult.appendChild(img);
+      clearInterval(timerInterval);
+      const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+      imageResult.innerHTML = `
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+          <span style="color: #4ade80; font-size: 13px; margin-bottom: 6px;">✓ Generated in ${totalTime}s</span>
+        </div>
+      `;
+      imageResult.firstElementChild.appendChild(img);
     };
 
     img.onerror = () => {
-      imageResult.innerHTML = "Image generate nahi ho payi. Dubara koshish karein.";
+      clearInterval(timerInterval);
+      imageResult.innerHTML = `<span style="color: #ef4444;">Failed to generate image. Please try again.</span>`;
     };
   });
 }
