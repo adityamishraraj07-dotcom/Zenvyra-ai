@@ -108,7 +108,7 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
   }
 }
 
-// ================= IMAGE GENERATOR LOGIC (No Watermark + Live Timer) =================
+// ================= IMAGE GENERATOR LOGIC =================
 const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
 const imageUpload = document.getElementById("imageUpload");
@@ -141,27 +141,17 @@ if (generateImageBtn) {
 
     const query = encodeURIComponent(promptText || "cinematic masterpiece 8k");
     const seed = Math.floor(Math.random() * 1000000);
+    // Bina watermark wala clean model
     const finalUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&nologo=1&nofeed=1&model=flux-realism&seed=" + seed;
-
-    // Outer wrapper jo bottom watermark ko frame se mask out karega
-    const imgWrapper = document.createElement("div");
-    imgWrapper.style.width = "100%";
-    imgWrapper.style.maxWidth = "420px";
-    imgWrapper.style.height = "392px";
-    imgWrapper.style.overflow = "hidden";
-    imgWrapper.style.borderRadius = "14px";
-    imgWrapper.style.marginTop = "12px";
-    imgWrapper.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
 
     const img = document.createElement("img");
     img.src = finalUrl;
     img.alt = "Generated Artwork";
     img.style.width = "100%";
-    img.style.height = "420px";
-    img.style.objectFit = "cover";
-    img.style.display = "block";
-
-    imgWrapper.appendChild(img);
+    img.style.maxWidth = "420px";
+    img.style.borderRadius = "12px";
+    img.style.marginTop = "12px";
+    img.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
 
     img.onload = () => {
       clearInterval(timer);
@@ -171,7 +161,7 @@ if (generateImageBtn) {
           <span style="color:#4ade80; font-size:13px; font-weight:600; margin-bottom:8px;">✓ Generated successfully in ${totalTime}s</span>
         </div>
       `;
-      imageResult.firstElementChild.appendChild(imgWrapper);
+      imageResult.firstElementChild.appendChild(img);
     };
 
     img.onerror = () => {
@@ -179,5 +169,4 @@ if (generateImageBtn) {
       imageResult.innerHTML = `<span style="color:#ef4444;">Generation failed. Please try again.</span>`;
     };
   });
-        }
-      
+}
