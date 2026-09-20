@@ -319,3 +319,52 @@
 
       <div class="nav-item active" onclick="selectMode('Chat')">💬 Chat</div>
       <div class="nav-item" onclick="selectMode('Image')">◈ Images
+<script>
+  const WORKER_URL = "https://cold-wildflower-8c40.adityamishraraj07.workers.dev/";
+
+  document.addEventListener("click", async function(e) {
+    const btn = e.target.closest(".generate");
+      if (!btn) return;
+
+        const input = document.querySelector("textarea");
+          const prompt = input ? input.value.trim() : "";
+
+            if (!prompt) {
+                alert("Pehle image ka prompt likho.");
+                    return;
+                      }
+
+                        btn.disabled = true;
+                          btn.textContent = "Generating...";
+
+                            try {
+                                const response = await fetch(WORKER_URL + "/generate", {
+                                      method: "POST",
+                                            headers: {
+                                                    "Content-Type": "application/json"
+                                                          },
+                                                                body: JSON.stringify({ prompt: prompt })
+                                                                    });
+
+                                                                        const data = await response.json();
+
+                                                                            if (!data.success) {
+                                                                                  throw new Error(data.error || "Generation failed");
+                                                                                      }
+
+                                                                                          const img = document.createElement("img");
+                                                                                              img.src = "data:image/png;base64," + data.image;
+                                                                                                  img.style.maxWidth = "100%";
+                                                                                                      img.style.borderRadius = "16px";
+                                                                                                          img.style.marginTop = "20px";
+
+                                                                                                              document.querySelector(".composer")?.appendChild(img);
+
+                                                                                                                } catch (error) {
+                                                                                                                    alert("Image generate nahi hui: " + error.message);
+                                                                                                                      }
+
+                                                                                                                        btn.disabled = false;
+                                                                                                                          btn.textContent = "Generate";
+                                                                                                                          });
+                                                                                                                          </script>
