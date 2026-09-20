@@ -108,7 +108,8 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
   }
 }
 
-// ================= IMAGE GENERATOR LOGIC (Ultra HD + Sharp Face + Clean) =================
+
+// ================= IMAGE GENERATOR LOGIC (HD + Watermark Free + Download) =================
 const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
 const imageUpload = document.getElementById("imageUpload");
@@ -139,7 +140,6 @@ if (generateImageBtn) {
       if (timerEl) timerEl.textContent = `Time elapsed: ${elapsed}s`;
     }, 1000);
 
-    // Sharp facial detailing & anti-blur enhancements
     const qualityBoost = "extremely detailed face, sharp symmetrical eyes, realistic detailed skin texture, 8k uhd, dslr portrait photography, 85mm lens f1.4, cinematic lighting, sharp focus, hyperrealistic";
     const negativeFilter = "blur, hazy, soft focus, deformed face, distorted eyes, bad anatomy, low quality, artifacts";
     
@@ -147,10 +147,8 @@ if (generateImageBtn) {
     const query = encodeURIComponent(finalPromptText);
     const seed = Math.floor(Math.random() * 90000000) + 1000000;
 
-    // Ultra HD Flux Model call
     const finalUrl = `https://image.pollinations.ai/prompt/${query}?width=1024&height=1024&model=flux&nologo=1&seed=${seed}`;
 
-    // Masked container jo watermark ko frame ke bahar clip kar dega
     const frame = document.createElement("div");
     frame.style.width = "100%";
     frame.style.maxWidth = "440px";
@@ -172,6 +170,41 @@ if (generateImageBtn) {
 
     frame.appendChild(img);
 
+    // Download Button
+    const downloadBtn = document.createElement("button");
+    downloadBtn.textContent = "⬇ Download Image";
+    downloadBtn.style.marginTop = "14px";
+    downloadBtn.style.padding = "10px 22px";
+    downloadBtn.style.borderRadius = "8px";
+    downloadBtn.style.border = "none";
+    downloadBtn.style.background = "linear-gradient(135deg, #6366f1, #a855f7)";
+    downloadBtn.style.color = "#ffffff";
+    downloadBtn.style.fontSize = "14px";
+    downloadBtn.style.fontWeight = "600";
+    downloadBtn.style.cursor = "pointer";
+    downloadBtn.style.boxShadow = "0 4px 14px rgba(99, 102, 241, 0.4)";
+
+    downloadBtn.onclick = async () => {
+      downloadBtn.textContent = "⏳ Downloading...";
+      try {
+        const res = await fetch(finalUrl);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = `zenvyra_${Date.now()}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+        downloadBtn.textContent = "✓ Downloaded!";
+        setTimeout(() => (downloadBtn.textContent = "⬇ Download Image"), 2000);
+      } catch (err) {
+        window.open(finalUrl, "_blank");
+        downloadBtn.textContent = "⬇ Download Image";
+      }
+    };
+
     img.onload = () => {
       clearInterval(timer);
       const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -181,6 +214,7 @@ if (generateImageBtn) {
         </div>
       `;
       imageResult.firstElementChild.appendChild(frame);
+      imageResult.firstElementChild.appendChild(downloadBtn);
     };
 
     img.onerror = () => {
@@ -188,5 +222,4 @@ if (generateImageBtn) {
       imageResult.innerHTML = `<span style="color:#ef4444;">Generation failed. Please try again.</span>`;
     };
   });
-                                                 }
-      
+}
