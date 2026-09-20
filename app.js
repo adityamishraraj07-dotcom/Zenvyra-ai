@@ -108,7 +108,7 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
   }
 }
 
-// ================= IMAGE GENERATOR LOGIC =================
+// ================= IMAGE GENERATOR LOGIC (100% Watermark Free) =================
 const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
 const imageUpload = document.getElementById("imageUpload");
@@ -141,30 +141,49 @@ if (generateImageBtn) {
 
     const query = encodeURIComponent(promptText || "cinematic masterpiece 8k");
     const seed = Math.floor(Math.random() * 1000000);
-    // Bina watermark wala clean model
-    const finalUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&nologo=1&nofeed=1&model=flux-realism&seed=" + seed;
+    const rawUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&seed=" + seed;
 
-    const img = document.createElement("img");
-    img.src = finalUrl;
-    img.alt = "Generated Artwork";
-    img.style.width = "100%";
-    img.style.maxWidth = "420px";
-    img.style.borderRadius = "12px";
-    img.style.marginTop = "12px";
-    img.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
+    const sourceImg = new Image();
+    sourceImg.crossOrigin = "anonymous";
+    sourceImg.src = rawUrl;
 
-    img.onload = () => {
+    sourceImg.onload = () => {
       clearInterval(timer);
       const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+
+      // Canvas auto-crop: bottom 36px (jahan logo hai) usko frame se bahar cut kar deta hai
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const cropBottom = 36;
+      canvas.width = sourceImg.naturalWidth || 800;
+      canvas.height = (sourceImg.naturalHeight || 800) - cropBottom;
+
+      ctx.drawImage(
+        sourceImg,
+        0, 0, canvas.width, canvas.height,
+        0, 0, canvas.width, canvas.height
+      );
+
+      const cleanDataUrl = canvas.toDataURL("image/jpeg", 0.95);
+
+      const finalImg = document.createElement("img");
+      finalImg.src = cleanDataUrl;
+      finalImg.alt = "Clean Generated Artwork";
+      finalImg.style.width = "100%";
+      finalImg.style.maxWidth = "420px";
+      finalImg.style.borderRadius = "12px";
+      finalImg.style.marginTop = "12px";
+      finalImg.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
+
       imageResult.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center;">
           <span style="color:#4ade80; font-size:13px; font-weight:600; margin-bottom:8px;">✓ Generated successfully in ${totalTime}s</span>
         </div>
       `;
-      imageResult.firstElementChild.appendChild(img);
+      imageResult.firstElementChild.appendChild(finalImg);
     };
 
-    img.onerror = () => {
+    sourceImg.onerror = () => {
       clearInterval(timer);
       imageResult.innerHTML = `<span style="color:#ef4444;">Generation failed. Please try again.</span>`;
     };
