@@ -559,86 +559,6 @@ main {
   display: block !important;
 }
 
-/* ================= VEED-STYLE MODERN UI ================= */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  background: #080c14 !important;
-  color: #f8fafc !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  margin: 0;
-  padding: 0;
-}
-
-.app {
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 100vh !important;
-  width: 100% !important;
-}
-
-/* 1. Clean Top Header Bar */
-.sidebar {
-  width: 100% !important;
-  max-width: 100% !important;
-  height: auto !important;
-  padding: 16px 20px !important;
-  border-right: none !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-  background: #0c1220 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 16px !important;
-}
-
-.sidebar .brand {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 12px !important;
-  margin-bottom: 0 !important;
-}
-
-.brand-logo {
-  width: 36px !important;
-  height: 36px !important;
-  font-size: 18px !important;
-  font-weight: 800 !important;
-  background: linear-gradient(135deg, #6366f1, #a855f7) !important;
-  border-radius: 10px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: #ffffff !important;
-}
-
-.brand-title {
-  font-size: 22px !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.5px !important;
-  color: #ffffff !important;
-}
-
-.new-chat-btn {
-  display: none !important;
-}
-
-/* 2. Big Action Navigation Tabs (Not small buttons) */
-.nav {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 10px !important;
-  width: 100% !important;
-}
-
-.nav-item {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
   padding: 14px 8px !important;
   font-size: 13px !important;
   font-weight: 600 !important;
@@ -651,91 +571,143 @@ body {
   transition: all 0.25s ease !important;
 }
 
-.nav-item span:first-child {
-  font-size: 20px !important;
+/* ================= HERO SPACIOUS LAYOUT ================= */
+* {
+  box-sizing: border-box;
 }
 
-.nav-item:hover {
-  background: #1e293b !important;
-  color: #f1f5f9 !important;
-  border-color: rgba(255, 255, 255, 0.16) !important;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #080c14;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.nav-item.active {
-  background: linear-gradient(135deg, #4f46e5, #9333ea) !important;
+.app {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+  padding: 24px 18px 30px 18px !important;
+  justify-content: space-between !important;
+  max-width: 540px !important;
+  margin: 0 auto !important;
+}
+
+/* Top Section: Big Centered Title & About */
+.sidebar {
+  width: 100% !important;
+  height: auto !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 8px !important;
+}
+
+.sidebar .brand {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+.brand-logo {
+  display: none !important;
+}
+
+.brand-title {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
   color: #ffffff !important;
-  border-color: transparent !important;
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3) !important;
 }
 
-/* 3. Hero & Content Section (VEED Card Layout) */
-.main, .content, main {
+.new-chat-btn {
+  display: none !important;
+}
+
+/* Middle Section: Feature Tabs Spaced Out */
+.nav {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 20px 0 !important;
+}
+
+.nav-item {
   flex: 1 !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  padding: 24px 16px !important;
-  max-width: 680px !important;
-  margin: 0 auto !important;
-  width: 100% !important;
-}
-
-/* Big Hero Title */
-h1, .hero-title, .page-title {
-  font-size: 28px !important;
-  font-weight: 800 !important;
-  text-align: center !important;
-  letter-spacing: -0.5px !important;
-  margin: 12px 0 6px 0 !important;
-  color: #ffffff !important;
-}
-
-.hero-subtitle, .page-subtitle {
+  justify-content: center !important;
+  padding: 14px 10px !important;
   font-size: 14px !important;
+  font-weight: 600 !important;
   color: #94a3b8 !important;
-  text-align: center !important;
-  margin-bottom: 24px !important;
-  line-height: 1.5 !important;
+  background: #111827 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
 }
 
-/* Rounded Input Container */
+.nav-item.active {
+  background: #ffffff !important;
+  color: #090d16 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Center Interactive Area */
+.main, .content, main {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+/* Roomy Text Input Area */
 textarea, input[type="text"] {
   width: 100% !important;
-  border-radius: 16px !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  background: #141d2e !important;
+  min-height: 140px !important;
+  border-radius: 20px !important;
+  background: #111827 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #ffffff !important;
-  padding: 16px !important;
-  font-size: 15px !important;
-  line-height: 1.5 !important;
+  padding: 18px !important;
+  font-size: 16px !important;
   outline: none !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-  transition: border-color 0.2s !important;
 }
 
-textarea:focus, input[type="text"]:focus {
-  border-color: #6366f1 !important;
-}
-
-/* Primary Big Button (Like VEED "Make with AI") */
-button#generateImageBtn, 
-button#sendChatBtn, 
+/* Big Bold Bottom "Create" Button */
+button#generateImageBtn,
+button#sendChatBtn,
 .primary-btn {
   width: 100% !important;
-  padding: 14px 24px !important;
-  font-size: 15px !important;
+  padding: 16px !important;
+  font-size: 18px !important;
   font-weight: 700 !important;
-  border-radius: 14px !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  color: #090d16 !important;
   border: none !important;
-  background: linear-gradient(135deg, #6366f1, #a855f7) !important;
-  color: #ffffff !important;
   cursor: pointer !important;
-  margin-top: 14px !important;
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2) !important;
   transition: transform 0.15s ease !important;
 }
 
-button#generateImageBtn:active, 
+button#generateImageBtn:active,
 .primary-btn:active {
   transform: scale(0.98) !important;
 }
