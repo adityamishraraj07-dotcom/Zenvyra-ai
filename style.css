@@ -530,4 +530,15 @@ main {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   margin-top: 4px;
 }
+/* =================================
+   PAGE SWITCHING (CHAT / IMAGE / VIDEO)
+==================================== */
+
+.page-section {
+  display: none;
+}
+
+.page-section.active {
+  display: block;
+}
 
