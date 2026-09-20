@@ -541,4 +541,21 @@ main {
 .page-section.active {
   display: block;
 }
+/* =================================
+   PAGE DISPLAY FIX
+==================================== */
+
+.chat-page,
+.image-page,
+.hero,
+.page-section {
+  display: none !important;
+}
+
+.chat-page.active,
+.image-page.active,
+.hero.active,
+.page-section.active {
+  display: block !important;
+}
 
