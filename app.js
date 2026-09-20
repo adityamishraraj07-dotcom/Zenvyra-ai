@@ -141,7 +141,7 @@ if (generateImageBtn) {
 
     const query = encodeURIComponent(promptText || "cinematic masterpiece 8k");
     const seed = Math.floor(Math.random() * 1000000);
-    const finalUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&nologo=true&nofeed=true&enhance=false&seed=" + seed;
+    const finalUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&nologo=1&nofeed=1&model=flux-realism&seed=" + seed;
 
     // Outer wrapper jo bottom watermark ko frame se mask out karega
     const imgWrapper = document.createElement("div");
