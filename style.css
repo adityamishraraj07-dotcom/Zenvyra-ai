@@ -474,3 +474,41 @@ button {
 .chat-composer button:hover {
   background: var(--accent-light);
 }
+/* =================================
+   GLOBAL LAYOUT & MOBILE VIEW FIX
+==================================== */
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.app {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+}
+
+.sidebar {
+  width: 100% !important;
+  min-height: auto !important;
+}
+
+.topbar, 
+.chat-page, 
+.image-page, 
+.hero, 
+.features, 
+main {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+}
+
+.chat-composer,
+.chat-messages {
+  width: 100% !important;
+  max-width: 700px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
