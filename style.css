@@ -512,3 +512,22 @@ main {
   margin-left: auto !important;
   margin-right: auto !important;
 }
+/* =================================
+   AI MESSAGE BUBBLE STYLING
+==================================== */
+
+.ai-message {
+  align-self: flex-start;
+  background: var(--panel-light);
+  color: var(--text);
+  padding: 14px 20px;
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid var(--border);
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 80%;
+  word-break: break-word;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  margin-top: 4px;
+}
+
