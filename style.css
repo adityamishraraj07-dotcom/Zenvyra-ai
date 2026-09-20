@@ -559,41 +559,54 @@ main {
   display: block !important;
 }
 
-/* ================= TOP HEADER & NAVIGATION BAR ================= */
-.app {
-  flex-direction: column !important;
+/* ================= FULLSCREEN MODERN APP LAYOUT ================= */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: #090d16;
 }
 
+.app {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+  height: 100vh !important;
+  width: 100% !important;
+}
+
+/* 1. Header Section (Centered Clean Brand) */
 .sidebar {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
-  padding: 16px 16px 12px 16px !important;
+  padding: 14px 16px 10px 16px !important;
   border-right: none !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  background: #090d16 !important;
+  background: #0f172a !important;
   display: flex !important;
   flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 14px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
 }
 
-/* Brand Title & Logo */
 .sidebar .brand {
   display: flex !important;
   align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 10px !important;
+  justify-content: center !important;
+  gap: 8px !important;
   margin-bottom: 0 !important;
 }
 
 .brand-logo {
-  width: 34px !important;
-  height: 34px !important;
-  font-size: 18px !important;
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
   background: linear-gradient(135deg, #6366f1, #a855f7) !important;
-  border-radius: 8px !important;
+  border-radius: 6px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -601,9 +614,9 @@ main {
 }
 
 .brand-title {
-  font-size: 20px !important;
+  font-size: 18px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.3px !important;
+  letter-spacing: 0.5px !important;
   color: #ffffff !important;
 }
 
@@ -611,38 +624,30 @@ main {
   display: none !important;
 }
 
-/* Horizontal Action Tabs */
+/* 2. Full Width Equal Tabs */
 .nav {
   display: flex !important;
   flex-direction: row !important;
-  align-items: center !important;
-  gap: 10px !important;
   width: 100% !important;
-  overflow-x: auto !important;
-  white-space: nowrap !important;
-  padding-bottom: 4px !important;
-  scrollbar-width: none !important;
-}
-
-.nav::-webkit-scrollbar {
-  display: none !important;
+  gap: 8px !important;
+  justify-content: space-between !important;
 }
 
 .nav-item {
+  flex: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
-  padding: 10px 18px !important;
-  font-size: 14px !important;
+  gap: 6px !important;
+  padding: 9px 4px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   color: #94a3b8 !important;
-  background: #111827 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 12px !important;
-  cursor: pointer !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 10px !important;
   text-decoration: none !important;
-  flex-shrink: 0 !important;
+  text-align: center !important;
   transition: all 0.2s ease !important;
 }
 
@@ -650,5 +655,14 @@ main {
   background: linear-gradient(135deg, #6366f1, #a855f7) !important;
   color: #ffffff !important;
   border-color: transparent !important;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35) !important;
+}
+
+/* 3. Main Body Fills the Remaining Screen */
+.main, .content, main {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
 }
