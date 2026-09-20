@@ -643,3 +643,55 @@ main {
   padding: 20px;
 }
 
+/* Sidebar aur Navigation ko Horizontal banaye */
+.app {
+  flex-direction: column !important;
+}
+
+.sidebar {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  padding: 10px 14px !important;
+  border-right: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  overflow-x: auto !important;
+}
+
+.sidebar .brand {
+  margin-bottom: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.new-chat-btn {
+  display: none !important;
+}
+
+.nav {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+}
+
+.nav-item {
+  padding: 8px 14px !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+  color: #fff !important;
+}
