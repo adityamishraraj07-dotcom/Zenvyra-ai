@@ -1,6 +1,4 @@
-// ==========================================
-// 1. PAGE SWITCHING LOGIC (Direct Display Fix)
-// ==========================================
+// Navigation Elements
 const navItems = document.querySelectorAll(".nav-item");
 const pages = {
   chat: document.getElementById("chatPage"),
@@ -8,36 +6,39 @@ const pages = {
   video: document.getElementById("videoPage")
 };
 
+function switchPage(target) {
+  // Sabhi sections ko forcibly hide karo
+  Object.values(pages).forEach((page) => {
+    if (page) {
+      page.style.setProperty("display", "none", "important");
+      page.classList.remove("active");
+    }
+  });
+
+  // Target section ko forcibly show karo
+  if (pages[target]) {
+    pages[target].style.setProperty("display", "block", "important");
+    pages[target].classList.add("active");
+  }
+}
+
+// Nav clicks
 navItems.forEach((item) => {
   item.addEventListener("click", (event) => {
     event.preventDefault();
     const target = item.getAttribute("data-page");
 
-    // Nav active styling
     navItems.forEach((nav) => nav.classList.remove("active"));
     item.classList.add("active");
 
-    // Sabhi pages ko hide karo
-    Object.values(pages).forEach((page) => {
-      if (page) page.style.display = "none";
-    });
-
-    // Target page ko show karo
-    if (pages[target]) {
-      pages[target].style.display = "block";
-    }
+    switchPage(target);
   });
 });
 
-// Default active page set karein
-if (pages.chat) pages.chat.style.display = "block";
-if (pages.image) pages.image.style.display = "none";
-if (pages.video) pages.video.style.display = "none";
+// Pehli baar khulne par Chat dikhao
+switchPage("chat");
 
-
-// ==========================================
-// 2. CHAT LOGIC (Send & Bot Reply)
-// ==========================================
+// ================= CHAT LOGIC =================
 const chatInput = document.getElementById("chatInput");
 const sendChat = document.getElementById("sendChat");
 const chatMessages = document.getElementById("chatMessages");
@@ -48,7 +49,6 @@ function sendMessage() {
   const message = chatInput.value.trim();
   if (message === "") return;
 
-  // Append user message
   const userMsg = document.createElement("div");
   userMsg.className = "user-message";
   userMsg.textContent = message;
@@ -56,7 +56,6 @@ function sendMessage() {
 
   chatInput.value = "";
 
-  // Simulated AI response
   setTimeout(() => {
     const aiMsg = document.createElement("div");
     aiMsg.className = "ai-message";
@@ -67,78 +66,50 @@ function sendMessage() {
 
 if (sendChat && chatInput) {
   sendChat.addEventListener("click", sendMessage);
-
-  chatInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
       sendMessage();
     }
   });
 }
 
-if (newChatBtn) {
+if (newChatBtn && chatMessages) {
   newChatBtn.addEventListener("click", () => {
-    if (chatMessages) {
-      chatMessages.innerHTML = `
-        <div class="welcome-box">
-          <h3>✦ Welcome to Zenvyra AI</h3>
-          <p>Your intelligent assistant is ready. Type in English or Hindi, or use the voice button below.</p>
-        </div>
-      `;
-    }
+    chatMessages.innerHTML = `
+      <div class="welcome-box">
+        <h3>✦ Welcome to Zenvyra AI</h3>
+        <p>Your intelligent assistant is ready. Type in English or Hindi, or use the voice button below.</p>
+      </div>
+    `;
   });
 }
 
-// ==========================================
-// 3. VOICE INPUT LOGIC (Hindi & English Support)
-// ==========================================
+// ================= VOICE LOGIC =================
 const voiceBtn = document.getElementById("voiceBtn");
-
 if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.lang = "hi-IN"; // Hindi aur Hinglish/English support
-
-  let isRecording = false;
+  recognition.lang = "hi-IN";
 
   if (voiceBtn) {
     voiceBtn.addEventListener("click", () => {
-      if (!isRecording) {
+      try {
         recognition.start();
         voiceBtn.textContent = "🔴";
-        isRecording = true;
-      } else {
+      } catch (err) {
         recognition.stop();
         voiceBtn.textContent = "🎙️";
-        isRecording = false;
       }
     });
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      if (chatInput) {
-        chatInput.value = transcript;
-      }
+    recognition.onresult = (e) => {
+      if (chatInput) chatInput.value = e.results[0][0].transcript;
       voiceBtn.textContent = "🎙️";
-      isRecording = false;
-    };
-
-    recognition.onerror = () => {
-      voiceBtn.textContent = "🎙️";
-      isRecording = false;
     };
 
     recognition.onend = () => {
       voiceBtn.textContent = "🎙️";
-      isRecording = false;
     };
-  }
-} else {
-  if (voiceBtn) {
-    voiceBtn.addEventListener("click", () => {
-      alert("Aapke browser me Voice Recognition support nahi hai.");
-    });
   }
 }
