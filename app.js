@@ -108,7 +108,7 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
   }
 }
 
-// ================= IMAGE GENERATOR LOGIC (100% Watermark Free) =================
+// ================= IMAGE GENERATOR LOGIC (Ultra HD + Sharp Face + Clean) =================
 const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
 const imageUpload = document.getElementById("imageUpload");
@@ -116,9 +116,9 @@ const imageResult = document.getElementById("imageResult");
 
 if (generateImageBtn) {
   generateImageBtn.addEventListener("click", () => {
-    const promptText = imagePrompt ? imagePrompt.value.trim() : "";
+    const rawPrompt = imagePrompt ? imagePrompt.value.trim() : "";
 
-    if (!promptText && (!imageUpload || !imageUpload.files[0])) {
+    if (!rawPrompt && (!imageUpload || !imageUpload.files[0])) {
       alert("Please enter an image description prompt!");
       return;
     }
@@ -128,7 +128,7 @@ if (generateImageBtn) {
 
     imageResult.innerHTML = `
       <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-        <span style="color:var(--accent); font-weight:600;">✦ Generating your AI artwork...</span>
+        <span style="color:var(--accent); font-weight:600;">✦ Rendering ultra-sharp portrait...</span>
         <span id="liveTimer" style="color:var(--muted); font-size:13px;">Time elapsed: 0s</span>
       </div>
     `;
@@ -139,53 +139,54 @@ if (generateImageBtn) {
       if (timerEl) timerEl.textContent = `Time elapsed: ${elapsed}s`;
     }, 1000);
 
-    const query = encodeURIComponent(promptText || "cinematic masterpiece 8k");
-    const seed = Math.floor(Math.random() * 1000000);
-    const rawUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&seed=" + seed;
+    // Sharp facial detailing & anti-blur enhancements
+    const qualityBoost = "extremely detailed face, sharp symmetrical eyes, realistic detailed skin texture, 8k uhd, dslr portrait photography, 85mm lens f1.4, cinematic lighting, sharp focus, hyperrealistic";
+    const negativeFilter = "blur, hazy, soft focus, deformed face, distorted eyes, bad anatomy, low quality, artifacts";
+    
+    const finalPromptText = `${rawPrompt}, ${qualityBoost}, no ${negativeFilter}`;
+    const query = encodeURIComponent(finalPromptText);
+    const seed = Math.floor(Math.random() * 90000000) + 1000000;
 
-    const sourceImg = new Image();
-    sourceImg.crossOrigin = "anonymous";
-    sourceImg.src = rawUrl;
+    // Ultra HD Flux Model call
+    const finalUrl = `https://image.pollinations.ai/prompt/${query}?width=1024&height=1024&model=flux&nologo=1&seed=${seed}`;
 
-    sourceImg.onload = () => {
+    // Masked container jo watermark ko frame ke bahar clip kar dega
+    const frame = document.createElement("div");
+    frame.style.width = "100%";
+    frame.style.maxWidth = "440px";
+    frame.style.aspectRatio = "1 / 0.94";
+    frame.style.overflow = "hidden";
+    frame.style.borderRadius = "14px";
+    frame.style.marginTop = "14px";
+    frame.style.boxShadow = "0 12px 36px rgba(0,0,0,0.65)";
+    frame.style.background = "#0f172a";
+
+    const img = document.createElement("img");
+    img.src = finalUrl;
+    img.alt = "Ultra Sharp AI Portrait";
+    img.style.width = "100%";
+    img.style.height = "106.5%";
+    img.style.objectFit = "cover";
+    img.style.objectPosition = "top";
+    img.style.display = "block";
+
+    frame.appendChild(img);
+
+    img.onload = () => {
       clearInterval(timer);
       const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
-
-      // Canvas auto-crop: bottom 36px (jahan logo hai) usko frame se bahar cut kar deta hai
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const cropBottom = 36;
-      canvas.width = sourceImg.naturalWidth || 800;
-      canvas.height = (sourceImg.naturalHeight || 800) - cropBottom;
-
-      ctx.drawImage(
-        sourceImg,
-        0, 0, canvas.width, canvas.height,
-        0, 0, canvas.width, canvas.height
-      );
-
-      const cleanDataUrl = canvas.toDataURL("image/jpeg", 0.95);
-
-      const finalImg = document.createElement("img");
-      finalImg.src = cleanDataUrl;
-      finalImg.alt = "Clean Generated Artwork";
-      finalImg.style.width = "100%";
-      finalImg.style.maxWidth = "420px";
-      finalImg.style.borderRadius = "12px";
-      finalImg.style.marginTop = "12px";
-      finalImg.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
-
       imageResult.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center;">
-          <span style="color:#4ade80; font-size:13px; font-weight:600; margin-bottom:8px;">✓ Generated successfully in ${totalTime}s</span>
+        <div style="display:flex; flex-direction:column; align-items:center; width: 100%;">
+          <span style="color:#4ade80; font-size:13px; font-weight:600; margin-bottom:8px;">✓ Rendered in ${totalTime}s (Ultra Sharp 1024px)</span>
         </div>
       `;
-      imageResult.firstElementChild.appendChild(finalImg);
+      imageResult.firstElementChild.appendChild(frame);
     };
 
-    sourceImg.onerror = () => {
+    img.onerror = () => {
       clearInterval(timer);
       imageResult.innerHTML = `<span style="color:#ef4444;">Generation failed. Please try again.</span>`;
     };
   });
-}
+                                                 }
+      
