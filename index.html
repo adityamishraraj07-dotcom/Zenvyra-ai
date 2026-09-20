@@ -55,26 +55,86 @@
       </nav>
 
     </aside>
+<main class="main">
+
+  <header class="topbar">
+    <div>
+      <h2>Zenvyra AI</h2>
+      <p>AI Image Generator</p>
+    </div>
+  </header>
+
+  <section class="image-page">
+
+    <div class="image-header">
+      <span class="badge">✦ AI IMAGE GENERATOR</span>
+
+      <h1>Create images with AI</h1>
+
+      <p>
+        Describe your idea and turn your imagination into
+        stunning AI-generated artwork.
+      </p>
+    </div>
+
+    <div class="image-workspace">
+
+      <div class="image-controls">
+
+        <label for="imagePrompt">
+          Describe your image
+        </label>
+
+        <textarea
+          id="imagePrompt"
+          placeholder="Example: A futuristic city at sunset, cinematic lighting, ultra detailed..."
+          rows="6"
+        ></textarea>
+
+        <div class="image-settings">
+
+          <div class="setting-box">
+            <span>Model</span>
+            <strong>FLUX Schnell</strong>
+          </div>
+
+          <div class="setting-box">
+            <span>Quality</span>
+            <strong>Standard</strong>
+          </div>
+
+        </div>
+
+        <button id="generateImage" class="generate-button">
+          ✦ Generate Image
+        </button>
+
+      </div>
 
 
-    <!-- MAIN CONTENT -->
-    const navItems = document.querySelectorAll(".nav-item");
+      <div class="image-preview">
 
-navItems.forEach((item) => {
-  item.addEventListener("click", (event) => {
-    event.preventDefault();
+        <div class="preview-placeholder">
 
-    navItems.forEach((nav) => {
-      nav.classList.remove("active");
-    });
+          <div class="preview-icon">
+            🖼️
+          </div>
 
-    item.classList.add("active");
-  });
-});
+          <h3>Your generated image will appear here</h3>
 
-      <!-- TOP BAR -->
-      <header class="topbar">
+          <p>
+            Enter a prompt and generate your first image.
+          </p>
 
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
         <div>
           <h2>Zenvyra AI</h2>
           <p>Your creative AI workspace</p>
