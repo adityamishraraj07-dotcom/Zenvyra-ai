@@ -128,19 +128,28 @@ if (generateImageBtn) {
       return;
     }
 
-    imageResult.innerHTML = `<span style="color: var(--accent);">✦ AI image generate ho rahi hai... Kripya intezar karein.</span>`;
+    imageResult.innerHTML = "✦ AI image generate ho rahi hai... Kripya intezar karein.";
 
-    // Free AI Image Generation API call (Pollinations)
-    const encodedPrompt = encodeURIComponent(promptText || "creative futuristic visual");
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=800&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
+    const query = encodeURIComponent(promptText || "futuristic AI artwork");
+    const seed = Math.floor(Math.random() * 1000000);
+    const finalUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&nologo=true&seed=" + seed;
 
-    const img = new Image();
-    img.src = imageUrl;
+    const img = document.createElement("img");
+    img.src = finalUrl;
+    img.alt = "Generated Artwork";
+    img.style.width = "100%";
+    img.style.maxWidth = "400px";
+    img.style.borderRadius = "12px";
+    img.style.marginTop = "10px";
+
     img.onload = () => {
-      imageResult.innerHTML = `<img src="${imageUrl}" alt="Generated AI Artwork" style="width: 100%; max-width: 450px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" />`;
+      imageResult.innerHTML = "";
+      imageResult.appendChild(img);
     };
+
     img.onerror = () => {
-      imageResult.innerHTML = `<span style="color: #ff5555;">Image generate karne me dikkat aayi. Dubara koshish karein.</span>`;
+      imageResult.innerHTML = "Image generate nahi ho payi. Dubara koshish karein.";
     };
   });
 }
+
