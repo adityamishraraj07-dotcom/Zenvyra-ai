@@ -1,11 +1,11 @@
 // ==========================================
-// 1. PAGE SWITCHING LOGIC (Chat / Image / Video)
+// 1. PAGE SWITCHING LOGIC (Direct Display Fix)
 // ==========================================
 const navItems = document.querySelectorAll(".nav-item");
-const pageSections = {
+const pages = {
   chat: document.getElementById("chatPage"),
   image: document.getElementById("imagePage"),
-  video: document.getElementById("videoPage"),
+  video: document.getElementById("videoPage")
 };
 
 navItems.forEach((item) => {
@@ -17,16 +17,23 @@ navItems.forEach((item) => {
     navItems.forEach((nav) => nav.classList.remove("active"));
     item.classList.add("active");
 
-    // Hide all pages, show target page
-    Object.values(pageSections).forEach((section) => {
-      if (section) section.classList.remove("active");
+    // Sabhi pages ko hide karo
+    Object.values(pages).forEach((page) => {
+      if (page) page.style.display = "none";
     });
 
-    if (pageSections[target]) {
-      pageSections[target].classList.add("active");
+    // Target page ko show karo
+    if (pages[target]) {
+      pages[target].style.display = "block";
     }
   });
 });
+
+// Default active page set karein
+if (pages.chat) pages.chat.style.display = "block";
+if (pages.image) pages.image.style.display = "none";
+if (pages.video) pages.video.style.display = "none";
+
 
 // ==========================================
 // 2. CHAT LOGIC (Send & Bot Reply)
