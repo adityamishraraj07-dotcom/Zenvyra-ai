@@ -108,8 +108,7 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
   }
 }
 
-
-// ================= IMAGE GENERATOR LOGIC (HD + Watermark Free + Download) =================
+// ================= IMAGE GENERATOR LOGIC (Dynamic Aspect Ratio + Prompt Accurate) =================
 const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
 const imageUpload = document.getElementById("imageUpload");
@@ -129,7 +128,7 @@ if (generateImageBtn) {
 
     imageResult.innerHTML = `
       <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-        <span style="color:var(--accent); font-weight:600;">✦ Rendering ultra-sharp portrait...</span>
+        <span style="color:var(--accent); font-weight:600;">✦ Rendering your AI visual...</span>
         <span id="liveTimer" style="color:var(--muted); font-size:13px;">Time elapsed: 0s</span>
       </div>
     `;
@@ -140,19 +139,34 @@ if (generateImageBtn) {
       if (timerEl) timerEl.textContent = `Time elapsed: ${elapsed}s`;
     }, 1000);
 
-    const qualityBoost = "extremely detailed face, sharp symmetrical eyes, realistic detailed skin texture, 8k uhd, dslr portrait photography, 85mm lens f1.4, cinematic lighting, sharp focus, hyperrealistic";
-    const negativeFilter = "blur, hazy, soft focus, deformed face, distorted eyes, bad anatomy, low quality, artifacts";
+    // Check user intent for aspect ratio
+    const lowerPrompt = rawPrompt.toLowerCase();
+    let imgWidth = 1024;
+    let imgHeight = 1024;
+
+    if (lowerPrompt.includes("landscape") || lowerPrompt.includes("wallpaper") || lowerPrompt.includes("wide") || lowerPrompt.includes("16:9")) {
+      imgWidth = 1280;
+      imgHeight = 720;
+    } else if (lowerPrompt.includes("portrait") || lowerPrompt.includes("story") || lowerPrompt.includes("vertical") || lowerPrompt.includes("9:16")) {
+      imgWidth = 768;
+      imgHeight = 1152;
+    }
+
+    // General high-quality enhancers (Bina kisi hardcoded portrait tag ke)
+    const qualityBoost = "masterpiece, 8k resolution, highly detailed, sharp focus, professional lighting, photorealistic";
+    const negativeFilter = "blur, hazy, soft focus, deformed, bad anatomy, low quality, artifacts, distorted";
     
     const finalPromptText = `${rawPrompt}, ${qualityBoost}, no ${negativeFilter}`;
     const query = encodeURIComponent(finalPromptText);
     const seed = Math.floor(Math.random() * 90000000) + 1000000;
 
-    const finalUrl = `https://image.pollinations.ai/prompt/${query}?width=1024&height=1024&model=flux&nologo=1&seed=${seed}`;
+    const finalUrl = `https://image.pollinations.ai/prompt/${query}?width=${imgWidth}&height=${imgHeight}&model=flux&nologo=1&seed=${seed}`;
 
+    // Clean frame jo watermark strip ko cut karta hai
     const frame = document.createElement("div");
     frame.style.width = "100%";
-    frame.style.maxWidth = "440px";
-    frame.style.aspectRatio = "1 / 0.94";
+    frame.style.maxWidth = "460px";
+    frame.style.aspectRatio = `${imgWidth} / ${imgHeight * 0.94}`;
     frame.style.overflow = "hidden";
     frame.style.borderRadius = "14px";
     frame.style.marginTop = "14px";
@@ -161,7 +175,7 @@ if (generateImageBtn) {
 
     const img = document.createElement("img");
     img.src = finalUrl;
-    img.alt = "Ultra Sharp AI Portrait";
+    img.alt = "Generated Artwork";
     img.style.width = "100%";
     img.style.height = "106.5%";
     img.style.objectFit = "cover";
@@ -210,7 +224,7 @@ if (generateImageBtn) {
       const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
       imageResult.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width: 100%;">
-          <span style="color:#4ade80; font-size:13px; font-weight:600; margin-bottom:8px;">✓ Rendered in ${totalTime}s (Ultra Sharp 1024px)</span>
+          <span style="color:#4ade80; font-size:13px; font-weight:600; margin-bottom:8px;">✓ Rendered in ${totalTime}s (${imgWidth}x${imgHeight})</span>
         </div>
       `;
       imageResult.firstElementChild.appendChild(frame);
@@ -222,4 +236,4 @@ if (generateImageBtn) {
       imageResult.innerHTML = `<span style="color:#ef4444;">Generation failed. Please try again.</span>`;
     };
   });
-}
+      }
