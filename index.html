@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenvyra AI - Premium AI Studio</title>
+    <script src="https://tailwindcss.com"></script>
+    <script src="https://unpkg.com"></script>
+    <style>
+        body {
+            background-color: #0B0F19;
+            color: #F3F4F6;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1F2937;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden select-none">
+
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-80 bg-[#111827] border-r border-[#1F2937] justify-between p-6 shrink-0">
+        <div class="flex flex-col gap-8">
+            <div class="flex items-center gap-3 px-3 py-4">
+                <i data-lucide="sparkles" class="w-9 h-9 text-indigo-400"></i>
+                <span class="text-2xl font-black tracking-wider text-white">ZENVYRA AI</span>
+            </div>
+            
+            <nav class="flex flex-col gap-3">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-btn flex items-center gap-4 px-4 py-4 rounded-xl text-lg font-medium bg-indigo-600 text-white transition-all">
+                    <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchView('chat')" id="nav-chat" class="nav-btn flex items-center gap-4 px-4 py-4 rounded-xl text-lg font-medium text-gray-400 hover:bg-[#1F2937] hover:text-white transition-all">
+                    <i data-lucide="message-square" class="w-6 h-6"></i>
+                    <span>AI Chat</span>
+                </button>
+                <button onclick="switchView('images')" id="nav-images" class="nav-btn flex items-center gap-4 px-4 py-4 rounded-xl text-lg font-medium text-gray-400 hover:bg-[#1F2937] hover:text-white transition-all">
+                    <i data-lucide="image" class="w-6 h-6"></i>
+                    <span>AI Images</span>
+                </button>
+                <button onclick="switchView('videos')" id="nav-videos" class="nav-btn flex items-center gap-4 px-4 py-4 rounded-xl text-lg font-medium text-gray-400 hover:bg-[#1F2937] hover:text-white transition-all">
+                    <i data-lucide="video" class="w-6 h-6"></i>
+                    <span>AI Videos</span>
+                </button>
+            </nav>
+        </div>
+
+        <button onclick="switchView('settings')" id="nav-settings" class="nav-btn flex items-center gap-4 px-4 py-4 rounded-xl text-lg font-medium text-gray-400 hover:bg-[#1F2937] hover:text-white transition-all">
+            <i data-lucide="settings" class="w-6 h-6"></i>
+            <span>Settings</span>
+        </button>
+    </aside>
+
+    <!-- MOBILE TOP BAR -->
+    <header class="md:hidden flex items-center justify-between px-6 py-5 bg-[#111827] border-b border-[#1F2937] shrink-0">
+        <div class="flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-7 h-7 text-indigo-400"></i>
+            <span class="text-xl font-black tracking-wider text-white">ZENVYRA AI</span>
+        </div>
+        <button onclick="switchView('settings')" class="p-3 bg-[#1F2937] rounded-xl text-gray-300">
+            <i data-lucide="settings" class="w-6 h-6"></i>
+        </button>
+    </header>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 pb-32 md:pb-12 relative">
+        
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="view-content block">
+            <div class="mb-10 mt-4">
+                <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white mb-4">Zenvyra AI</h1>
+                <p class="text-gray-400 text-lg md:text-2xl max-w-2xl font-light leading-relaxed">The ultimate premium creation suite. Choose an artificial intelligence module below to begin.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <div onclick="switchView('chat')" class="group p-8 bg-[#111827] border-2 border-[#1F2937] hover:border-indigo-500 rounded-2xl cursor-pointer transition-all flex flex-col justify-between h-64 shadow-xl">
+                    <div class="flex items-center justify-between">
+                        <div class="p-4 bg-indigo-600/10 text-indigo-400 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                            <i data-lucide="message-square" class="w-8 h-8"></i>
+                        </div>
+                        <i data-lucide="arrow-up-right" class="w-6 h-6 text-gray-600 group-hover:text-white transition-all"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-2">AI Chat Assistant</h2>
+                        <p class="text-gray-400 text-base leading-snug">Have smart conversations and generate instant content.</p>
+                    </div>
+                </div>
+
+                <div onclick="switchView('images')" class="group p-8 bg-[#111827] border-2 border-[#1F2937] hover:border-emerald-500 rounded-2xl cursor-pointer transition-all flex flex-col justify-between h-64 shadow-xl">
+                    <div class="flex items-center justify-between">
+                        <div class="p-4 bg-emerald-600/10 text-emerald-400 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                            <i data-lucide="image" class="w-8 h-8"></i>
+                        </div>
+                        <i data-lucide="arrow-up-right" class="w-6 h-6 text-gray-600 group-hover:text-white transition-all"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-2">AI Image Generator</h2>
+                        <p class="text-gray-400 text-base leading-snug">Generate stunning visual artwork powered by FLUX Schnell.</p>
+                    </div>
+                </div>
+
+                <div onclick="switchView('videos')" class="group p-8 bg-[#111827] border-2 border-[#1F2937] hover:border-purple-500 rounded-2xl cursor-pointer transition-all flex flex-col justify-between h-64 shadow-xl">
+                    <div class="flex items-center justify-between">
+                        <div class="p-4 bg-purple-600/10 text-purple-400 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-all">
+                            <i data-lucide="video" class="w-8 h-8"></i>
+                        </div>
+                        <i data-lucide="arrow-up-right" class="w-6 h-6 text-gray-600 group-hover:text-white transition-all"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-2">AI Video Generator</h2>
+                        <p class="text-gray-400 text-base leading-snug">Create cinematic short video clips from text descriptions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Chat Section (Integrated Successfully) -->
+        <div id="view-chat" class="view-content hidden h-full flex flex-col absolute inset-0 bg-[#0B0F19]">
+            <div id="chat-messages-container" class="flex-1 overflow-y-auto p-6 md:p-12 space-y-6 pb-40">
+                <div class="flex gap-5 max-w-3xl items-start bg-[#111827] border border-[#1F2937] p-6 rounded-2xl mx-auto md:mx-0">
+                    <div class="p-3 bg-indigo-600/20 text-indigo-400 rounded-xl shrink-0">
+                        <i data-lucide="sparkles" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-white mb-1">Zenvyra AI Assistant</h4>
+                        <p class="text-gray-300 text-lg leading-relaxed">Hello! Main aapka premium AI assistant hoon. Aaj hum kya create karein?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0B0F19] via-[#0B0F19]/90 to-transparent p-6 md:p-12 pt-10 z-10">
+                <div class="max-w-4xl mx-auto flex gap-4 items-end bg-[#111827] border-2 border-[#1F2937] focus-within:border-indigo-500 rounded-2xl p-3 shadow-2xl transition-all">
+                    <textarea id="chat-input" rows="2" class="flex-1 bg-transparent border-0 outline-none resize-none text-lg text-white placeholder-gray-500 px-2 py-1 max-h-36" placeholder="Ask Zenvyra AI anything..."></textarea>
+                    <button class="p-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all shrink-0 shadow-lg touch-manipulation">
+                        <i data-lucide="send" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Images Placeholder -->
+        <div id="view-images" class="view-content hidden">
+            <h1 class="text-4xl font-extrabold text-white mb-6">AI Image Generator</h1>
+        </div>
+
+        <!-- View: Videos Placeholder -->
+        <div id="view-videos" class="view-content hidden">
+            <h1 class="text-4xl font-extrabold text-white mb-6">AI Video Generator</h1>
+        </div>
+
+        <!-- View: Settings Placeholder -->
+        <div id="view-settings" class="view-content hidden">
+            <h1 class="text-4xl font-extrabold text-white mb-6">Settings</h1>
+        </div>
+
+    </main>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+                          
