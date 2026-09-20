@@ -558,92 +558,8 @@ main {
 .page-section.active {
   display: block !important;
 }
-/* ==========================================
-   VIDEO & STUDIO PAGES DISPLAY FIX
-========================================== */
 
-#chatPage,
-#imagePage,
-#videoPage,
-.page-section {
-  display: none !important;
-}
-
-#chatPage.active,
-#imagePage.active,
-#videoPage.active,
-.page-section.active {
-  display: block !important;
-}
-
-/* Studio & Input Styling */
-.studio-box {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.studio-box textarea {
-  width: 100%;
-  min-height: 100px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: #fff;
-  padding: 14px;
-  font-size: 15px;
-  font-family: inherit;
-  resize: vertical;
-}
-
-.upload-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.upload-field input[type="file"] {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.primary-btn {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 24px;
-  font-weight: 600;
-  cursor: pointer;
-  width: fit-content;
-  transition: opacity 0.2s ease;
-}
-
-.primary-btn:hover {
-  opacity: 0.9;
-}
-
-.result-placeholder {
-  min-height: 160px;
-  border: 2px dashed var(--border);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  font-size: 14px;
-  text-align: center;
-  padding: 20px;
-}
-
-/* Sidebar aur Navigation ko Horizontal banaye */
+/* ================= HORIZONTAL TOP NAVIGATION ================= */
 .app {
   flex-direction: column !important;
 }
@@ -693,5 +609,5 @@ main {
 
 .nav-item.active {
   background: linear-gradient(135deg, #6366f1, #a855f7) !important;
-  color: #fff !important;
+  color: #ffffff !important;
 }
