@@ -1,4 +1,4 @@
-// Navigation Elements
+// ================= PAGE SWITCHING =================
 const navItems = document.querySelectorAll(".nav-item");
 const pages = {
   chat: document.getElementById("chatPage"),
@@ -7,7 +7,6 @@ const pages = {
 };
 
 function switchPage(target) {
-  // Sabhi sections ko forcibly hide karo
   Object.values(pages).forEach((page) => {
     if (page) {
       page.style.setProperty("display", "none", "important");
@@ -15,27 +14,22 @@ function switchPage(target) {
     }
   });
 
-  // Target section ko forcibly show karo
   if (pages[target]) {
     pages[target].style.setProperty("display", "block", "important");
     pages[target].classList.add("active");
   }
 }
 
-// Nav clicks
 navItems.forEach((item) => {
   item.addEventListener("click", (event) => {
     event.preventDefault();
     const target = item.getAttribute("data-page");
-
     navItems.forEach((nav) => nav.classList.remove("active"));
     item.classList.add("active");
-
     switchPage(target);
   });
 });
 
-// Pehli baar khulne par Chat dikhao
 switchPage("chat");
 
 // ================= CHAT LOGIC =================
@@ -59,7 +53,7 @@ function sendMessage() {
   setTimeout(() => {
     const aiMsg = document.createElement("div");
     aiMsg.className = "ai-message";
-    aiMsg.textContent = "Hello! Main Zenvyra AI hoon. Aapki kya madad kar sakta hoon?";
+    aiMsg.textContent = "Hello! I am Zenvyra AI. How can I assist you today?";
     chatMessages.appendChild(aiMsg);
   }, 1000);
 }
@@ -114,8 +108,7 @@ if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
   }
 }
 
-}
-// ================= IMAGE GENERATOR LOGIC =================
+// ================= IMAGE GENERATOR LOGIC (Timer + English) =================
 const generateImageBtn = document.getElementById("generateImageBtn");
 const imagePrompt = document.getElementById("imagePrompt");
 const imageUpload = document.getElementById("imageUpload");
@@ -126,29 +119,27 @@ if (generateImageBtn) {
     const promptText = imagePrompt ? imagePrompt.value.trim() : "";
 
     if (!promptText && (!imageUpload || !imageUpload.files[0])) {
-      alert("Please enter an image prompt or upload a reference image!");
+      alert("Please enter an image description prompt!");
       return;
     }
 
-    let seconds = 0;
+    let elapsed = 0;
     const startTime = Date.now();
 
     imageResult.innerHTML = `
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-        <span style="color: var(--accent); font-weight: 500;">✦ Generating your AI artwork...</span>
-        <span id="imageTimer" style="color: var(--muted); font-size: 13px;">Time elapsed: 0s</span>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+        <span style="color:var(--accent); font-weight:600;">✦ Generating your AI artwork...</span>
+        <span id="liveTimer" style="color:var(--muted); font-size:13px;">Time elapsed: 0s</span>
       </div>
     `;
 
-    const timerInterval = setInterval(() => {
-      seconds++;
-      const timerElement = document.getElementById("imageTimer");
-      if (timerElement) {
-        timerElement.textContent = `Time elapsed: ${seconds}s`;
-      }
+    const timer = setInterval(() => {
+      elapsed++;
+      const timerEl = document.getElementById("liveTimer");
+      if (timerEl) timerEl.textContent = `Time elapsed: ${elapsed}s`;
     }, 1000);
 
-    const query = encodeURIComponent(promptText || "futuristic AI artwork");
+    const query = encodeURIComponent(promptText || "cyberpunk cinematic visual");
     const seed = Math.floor(Math.random() * 1000000);
     const finalUrl = "https://image.pollinations.ai/prompt/" + query + "?width=800&height=800&nologo=true&seed=" + seed;
 
@@ -161,20 +152,19 @@ if (generateImageBtn) {
     img.style.marginTop = "12px";
 
     img.onload = () => {
-      clearInterval(timerInterval);
+      clearInterval(timer);
       const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
       imageResult.innerHTML = `
-        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-          <span style="color: #4ade80; font-size: 13px; margin-bottom: 6px;">✓ Generated in ${totalTime}s</span>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <span style="color:#4ade80; font-size:13px; font-weight:600; margin-bottom:8px;">✓ Generated successfully in ${totalTime}s</span>
         </div>
       `;
       imageResult.firstElementChild.appendChild(img);
     };
 
     img.onerror = () => {
-      clearInterval(timerInterval);
-      imageResult.innerHTML = `<span style="color: #ef4444;">Failed to generate image. Please try again.</span>`;
+      clearInterval(timer);
+      imageResult.innerHTML = `<span style="color:#ef4444;">Generation failed. Please try again.</span>`;
     };
   });
-}
-
+      }
