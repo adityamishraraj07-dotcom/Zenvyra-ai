@@ -11,3 +11,15 @@ navItems.forEach((item) => {
     item.classList.add("active");
   });
 });
+const chatInput = document.getElementById("chatInput");
+const sendChat = document.getElementById("sendChat");
+
+sendChat.addEventListener("click", () => {
+  const message = chatInput.value.trim();
+
+  if (message === "") return;
+
+  console.log("User message:", message);
+
+  chatInput.value = "";
+});
