@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
   }
 
-  // 4. REAL INDIAN AI VOICE GENERATION & RELIABLE MP3 DOWNLOAD
+  // 4. REAL NEURAL AI VOICE (OPENAI-AUDIO VIA POLLINATIONS) - NO 404 ERROR
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
@@ -116,16 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const downloadVoiceBtn = document.getElementById("downloadVoiceBtn");
   const voiceStatus = document.getElementById("voiceStatus");
 
-  let systemVoices = [];
-  function cacheVoices() {
-    if ("speechSynthesis" in window) {
-      systemVoices = window.speechSynthesis.getVoices();
-    }
-  }
-  cacheVoices();
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.onvoiceschanged = cacheVoices;
-  }
+  let activeAudioBlobUrl = null;
 
   if (playVoiceBtn) {
     playVoiceBtn.addEventListener("click", async () => {
@@ -135,114 +126,83 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const voice = voiceVoiceSelect.value;
+      const voiceSelection = voiceVoiceSelect.value;
       playVoiceBtn.disabled = true;
-      playVoiceBtn.innerText = "Synthesizing Audio...";
-      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Generating real audio...</span>";
+      playVoiceBtn.innerText = "Generating AI Voice...";
+      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Synthesizing real AI voice audio...</span>";
 
-      // 1. Language & Accent Mapping
-      let langCode = "hi-IN";
-      let pitch = 1.0;
-      let rate = 1.0;
-
-      if (voice === "Aditi") {
-        langCode = "hi-IN";
-        pitch = 1.45; // Sweet Indian Female
-        rate = 1.0;
-      } else if (voice === "Kajal") {
-        langCode = "hi-IN";
-        pitch = 1.2;  // Expressive Female
-        rate = 0.95;
-      } else if (voice === "Raveena") {
-        langCode = "hi-IN";
-        pitch = 1.05; // Mature Corporate Female
-        rate = 1.0;
-      } else if (voice === "hi_male_deep") {
-        langCode = "hi-IN";
-        pitch = 0.65; // Deep Male Bass
-        rate = 0.9;
-      } else if (voice === "hi_male_young") {
-        langCode = "hi-IN";
-        pitch = 0.95; // Young Energetic Male
-        rate = 1.15;
-      } else if (voice === "hi_male_news") {
-        langCode = "hi-IN";
-        pitch = 0.8;  // News Narrator
-        rate = 1.02;
-      } else if (voice === "Joanna") {
-        langCode = "en-US";
-        pitch = 1.25;
-      } else if (voice === "Matthew") {
-        langCode = "en-US";
-        pitch = 0.7;
+      // Mapping selections to neural voice models
+      let selectedModelVoice = "shimmer"; // Default pleasant female
+      if (voiceSelection.includes("Male") || voiceSelection.includes("deep") || voiceSelection.includes("Matthew") || voiceSelection.includes("Aarav")) {
+        selectedModelVoice = "onyx"; // Deep male narration
+      } else if (voiceSelection.includes("young") || voiceSelection.includes("Kabir") || voiceSelection.includes("Joey")) {
+        selectedModelVoice = "echo"; // Young energetic male
+      } else if (voiceSelection.includes("news") || voiceSelection.includes("Rajesh") || voiceSelection.includes("Brian")) {
+        selectedModelVoice = "fable"; // Clear broadcaster
+      } else if (voiceSelection.includes("Kajal") || voiceSelection.includes("Raveena")) {
+        selectedModelVoice = "nova"; // Warm expressive female
       } else {
-        langCode = "en-GB";
-        pitch = 0.9;
+        selectedModelVoice = "shimmer"; // Sweet natural tone
       }
 
-      // 2. Direct Online Audio Source
-      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${langCode.split("-")[0]}&client=tw-ob`;
+      const seed = Math.floor(Math.random() * 100000);
+      const neuralVoiceApiUrl = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai-audio&voice=${selectedModelVoice}&seed=${seed}`;
 
-      let audioWorked = false;
-
-      // Try playing online audio
       try {
-        realAudioPlayer.src = audioUrl;
-        audioPlayerContainer.style.display = "flex";
-        await realAudioPlayer.play();
-        audioWorked = true;
-        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Voice playing online!</span>";
-      } catch (err) {
-        // If external audio source blocked on mobile, trigger Web Speech engine
-        audioWorked = false;
-      }
+        const response = await fetch(neuralVoiceApiUrl);
+        if (!response.ok) throw new Error("Audio generation failed");
 
-      if (!audioWorked && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = langCode;
-        utterance.pitch = pitch;
-        utterance.rate = rate;
-
-        const matchedVoice = systemVoices.find(v => v.lang.toLowerCase().includes(langCode.toLowerCase().replace("-", "_")) || v.lang.toLowerCase().includes(langCode.toLowerCase()));
-        if (matchedVoice) {
-          utterance.voice = matchedVoice;
+        const audioBlob = await response.blob();
+        if (activeAudioBlobUrl) {
+          URL.revokeObjectURL(activeAudioBlobUrl);
         }
+        activeAudioBlobUrl = URL.createObjectURL(audioBlob);
 
-        utterance.onstart = () => {
-          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing voice audio!</span>";
-        };
-        utterance.onend = () => {
-          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Voice completed.</span>";
-        };
-
-        window.speechSynthesis.speak(utterance);
+        realAudioPlayer.src = activeAudioBlobUrl;
         audioPlayerContainer.style.display = "flex";
-      }
 
-      playVoiceBtn.disabled = false;
-      playVoiceBtn.innerText = "🎵 Generate Voice Audio →";
+        await realAudioPlayer.play();
+        voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Voice generated & playing! Download ready below.</span>";
+      } catch (err) {
+        // Fallback to internal speech synthesis
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "hi-IN";
+          window.speechSynthesis.speak(utterance);
+          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing with local engine!</span>";
+        } else {
+          voiceStatus.innerHTML = "<span style='color: #ef4444;'>Generation failed. Please try again.</span>";
+        }
+      } finally {
+        playVoiceBtn.disabled = false;
+        playVoiceBtn.innerText = "🎵 Generate Voice Audio →";
+      }
     });
   }
 
-  // DOWNLOAD BUTTON DIRECT ACTION
+  // GUARANTEED BLOB DOWNLOAD - DIRECT FILE SAVE (NO 404)
   if (downloadVoiceBtn) {
     downloadVoiceBtn.addEventListener("click", () => {
-      const text = voiceTextPrompt.value.trim();
-      if (!text) {
-        alert("Pehle text likh kar voice generate karein!");
+      if (!activeAudioBlobUrl) {
+        alert("Pehle voice generate kijiye!");
         return;
       }
 
-      const voice = voiceVoiceSelect.value;
-      const lang = voice.startsWith("hi") || voice === "Aditi" || voice === "Kajal" || voice === "Raveena" ? "hi" : "en";
-      const directDownloadUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob`;
+      downloadVoiceBtn.innerText = "⏳ Saving MP3...";
 
-      // Trigger instant save in new tab / download
-      const win = window.open(directDownloadUrl, "_blank");
-      if (!win) {
-        window.location.href = directDownloadUrl;
-      }
+      const tempLink = document.createElement("a");
+      tempLink.style.display = "none";
+      tempLink.href = activeAudioBlobUrl;
+      tempLink.download = `zenvyra-ai-voice-${Date.now()}.mp3`;
+
+      document.body.appendChild(tempLink);
+      tempLink.click();
+
+      setTimeout(() => {
+        document.body.removeChild(tempLink);
+        downloadVoiceBtn.innerText = "⬇️ Download MP3 File";
+      }, 800);
     });
   }
 
@@ -317,4 +277,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-          
+        
