@@ -1,4 +1,4 @@
-/* ================= COMPLETE ZENVYRA AI STYLING ================= */
+/* ================= FULL SCREEN RESPONSIVE APP ================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,38 +6,39 @@
 }
 
 html, body {
-  min-height: 100%;
+  height: 100%;
+  min-height: 100dvh;
   background: #080c14;
   color: #f8fafc;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
 }
 
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  padding: 24px 18px 40px 18px;
-  max-width: 580px;
+  justify-content: space-between;
+  min-height: 100dvh;
+  padding: 16px 16px 20px 16px;
+  max-width: 600px;
   margin: 0 auto;
-  gap: 20px;
 }
 
-/* 1. Header & 5 Lines Description */
+/* 1. Header Section */
 .hero-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   width: 100%;
-  gap: 14px;
+  gap: 12px;
 }
 
 .brand-hero-title {
-  font-size: 34px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
+  font-size: 32px;
+  font-weight: 800;
   color: #ffffff;
-  text-transform: capitalize;
+  letter-spacing: -0.5px;
 }
 
 .hero-description {
@@ -47,25 +48,24 @@ html, body {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 16px;
+  padding: 14px 16px;
   width: 100%;
   text-align: left;
 }
 
 .hero-description p {
   font-size: 13.5px;
-  line-height: 1.5;
+  line-height: 1.45;
   color: #cbd5e1;
   font-weight: 500;
 }
 
-/* 2. Top Action Tabs */
+/* 2. Top Navigation Tabs */
 .nav {
   display: flex;
-  flex-direction: row;
   width: 100%;
   gap: 10px;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .nav-item {
@@ -75,7 +75,7 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 14px 8px;
+  padding: 12px 6px;
   font-size: 13px;
   font-weight: 600;
   color: #94a3b8;
@@ -87,30 +87,46 @@ html, body {
 }
 
 .nav-item .nav-icon {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .nav-item.active {
   background: #ffffff;
   color: #090d16;
   border-color: #ffffff;
-  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
 }
 
-/* 3. Main Area & Large Text */
+/* 3. Main Area - Expands to Fill Center & Bottom */
 .main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
+  margin-top: 14px;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
 }
 
 .badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 5px 12px;
   background: rgba(99, 102, 241, 0.15);
   color: #818cf8;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
   margin-bottom: 8px;
+}
+
+.chat-welcome {
+  margin-bottom: 12px;
 }
 
 .chat-welcome h2 {
@@ -121,31 +137,41 @@ html, body {
 }
 
 .chat-welcome p {
-  font-size: 15px;
+  font-size: 14px;
   color: #94a3b8;
   line-height: 1.5;
-  margin-bottom: 18px;
 }
 
-/* 4. Large Roomy Input & Buttons */
-.chat-input-container {
+.chat-messages {
+  flex: 1;
+  min-height: 40px;
+  max-height: 200px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* 4. Large Roomy Input Box & Action Buttons */
+.chat-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   width: 100%;
 }
 
 textarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 140px;
   border-radius: 18px;
   background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: #ffffff;
   padding: 16px;
   font-size: 16px;
   outline: none;
-  resize: vertical;
+  resize: none;
 }
 
 textarea:focus {
@@ -160,7 +186,7 @@ textarea:focus {
 
 .primary-btn {
   flex: 2;
-  padding: 15px;
+  padding: 16px;
   font-size: 16px;
   font-weight: 700;
   border-radius: 14px;
@@ -168,12 +194,12 @@ textarea:focus {
   color: #ffffff;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
 }
 
 .secondary-btn {
   flex: 1;
-  padding: 15px;
+  padding: 16px;
   font-size: 15px;
   font-weight: 600;
   border-radius: 14px;
@@ -181,11 +207,5 @@ textarea:focus {
   color: #f8fafc;
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
-}
-
-.chat-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-}
+  }
+                         
