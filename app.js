@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => (voiceBtn.innerText = "🎙️ Voice");
   }
 
-  // 4. Voice Studio
+  // 4. Voice Studio & Direct MP3 Downloader
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 5. Image Generator - GUARANTEED 0% WATERMARK WITH VIEWPORT SHIELD & CANVAS CROP
+  // 5. Image Generator - GUARANTEED 0% WATERMARK WITH PIXEL-SLICE
   const imagePrompt = document.getElementById("imagePrompt");
   const aspectRatio = document.getElementById("aspectRatio");
   const generateImageBtn = document.getElementById("generateImageBtn");
@@ -312,107 +312,84 @@ document.addEventListener("DOMContentLoaded", () => {
         if (imageResult) {
           imageResult.innerHTML = `
             <div style="background: #111827; padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); text-align: center;">
-              <p style="color: #38bdf8; font-weight: 700;">🎨 Rendering High-Detail Masterpiece...</p>
+              <p style="color: #38bdf8; font-weight: 700;">🎨 Rendering High-Detail Artwork...</p>
               <p style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Time Elapsed: <strong style="color: #ffffff;">${elapsed}s</strong></p>
             </div>
           `;
         }
       }, 100);
 
-      let width = 1024, height = 1080;
+      let width = 1024, height = 1100;
       const ratio = aspectRatio ? aspectRatio.value : "1:1";
-      if (ratio === "16:9") { width = 1280; height = 780; }
-      else if (ratio === "9:16") { width = 720; height = 1340; }
+      if (ratio === "16:9") { width = 1280; height = 800; }
+      else if (ratio === "9:16") { width = 720; height = 1360; }
 
-      const enhanced = `${userPrompt}, cinematic masterpiece, ultra-detailed eyes, sharp natural facial expressions, photorealistic, 8k resolution, raytracing reflections, master photography, no watermark, no text`;
+      const enhanced = `${userPrompt}, 8k resolution, masterwork photography, photorealistic, sharp focus, cinematic lighting, highly detailed skin and eyes, raytracing, unreal engine 5, no watermark, no text`;
       const seed = Math.floor(Math.random() * 9999999);
       const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhanced)}?width=${width}&height=${height}&seed=${seed}&nologo=true&enhance=true&model=flux`;
 
-      try {
-        const fetchRes = await fetch(imageUrl);
-        const imgBlob = await fetchRes.blob();
-        const objectUrl = URL.createObjectURL(imgBlob);
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageUrl;
 
-        const img = new Image();
-        img.src = objectUrl;
-
-        img.onload = () => {
-          clearInterval(timerInterval);
-          const timeTaken = ((performance.now() - startTime) / 1000).toFixed(1);
-
-          // Canvas Watermark Trimmer
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          const w = img.naturalWidth;
-          const cleanH = img.naturalHeight - 75; // Cut bottom 75px watermark zone entirely
-
-          canvas.width = w;
-          canvas.height = cleanH;
-          ctx.drawImage(img, 0, 0, w, cleanH, 0, 0, w, cleanH);
-
-          canvas.toBlob((cleanBlob) => {
-            const finalCleanUrl = URL.createObjectURL(cleanBlob);
-            incrementStat("image");
-
-            if (imageResult) {
-              imageResult.innerHTML = `
-                <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
-                  <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 8px 30px rgba(0,0,0,0.6);">
-                    <img src="${finalCleanUrl}" style="width: 100%; display: block;" />
-                    <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.75); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; color: #38bdf8; font-weight: 600;">
-                      ⚡ ${timeTaken}s (No Watermark)
-                    </div>
-                  </div>
-                  <button id="dlCleanImgBtn" class="btn-secondary full-width" type="button" style="margin-top: 4px;">⬇️ Download Clean Image (${timeTaken}s)</button>
-                </div>
-              `;
-
-              const dlBtn = document.getElementById("dlCleanImgBtn");
-              if (dlBtn) {
-                dlBtn.onclick = () => {
-                  const a = document.createElement("a");
-                  a.href = finalCleanUrl;
-                  a.download = `zenvyra-clean-${Date.now()}.png`;
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                };
-              }
-            }
-
-            generateImageBtn.disabled = false;
-            generateImageBtn.innerText = "Generate Clean Image →";
-          }, "image/png");
-        };
-      } catch (err) {
+      img.onload = () => {
         clearInterval(timerInterval);
         const timeTaken = ((performance.now() - startTime) / 1000).toFixed(1);
-        incrementStat("image");
 
-        // CSS Crop Shield Fallback: Clamps out the bottom 6% logo cleanly
-        imageResult.innerHTML = `
-          <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
-            <div style="position: relative; border-radius: 16px; overflow: hidden; height: 350px;">
-              <img src="${imageUrl}" style="width: 100%; height: 108%; object-fit: cover; object-position: top; display: block;" />
-              <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.75); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; color: #38bdf8; font-weight: 600;">
-                ⚡ ${timeTaken}s (No Watermark)
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const w = img.naturalWidth;
+        const cleanH = img.naturalHeight - 85; // Strip out bottom 85px watermark zone entirely
+
+        canvas.width = w;
+        canvas.height = cleanH;
+        ctx.drawImage(img, 0, 0, w, cleanH, 0, 0, w, cleanH);
+
+        canvas.toBlob((cleanBlob) => {
+          const finalCleanUrl = URL.createObjectURL(cleanBlob);
+          incrementStat("image");
+
+          if (imageResult) {
+            imageResult.innerHTML = `
+              <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 8px 30px rgba(0,0,0,0.6);">
+                  <img src="${finalCleanUrl}" style="width: 100%; display: block;" />
+                  <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.75); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; color: #38bdf8; font-weight: 600;">
+                    ⚡ ${timeTaken}s (No Watermark)
+                  </div>
+                </div>
+                <button id="dlCleanImgBtn" class="btn-secondary full-width" type="button" style="margin-top: 4px;">⬇️ Download Clean Image (${timeTaken}s)</button>
               </div>
-            </div>
-            <button id="dlShieldBtn" class="btn-secondary full-width" type="button" style="margin-top: 4px;">⬇️ Download Clean Image (${timeTaken}s)</button>
-          </div>
-        `;
+            `;
 
-        const dlShieldBtn = document.getElementById("dlShieldBtn");
-        if (dlShieldBtn) {
-          dlShieldBtn.onclick = () => window.open(imageUrl, "_blank");
-        }
+            const dlBtn = document.getElementById("dlCleanImgBtn");
+            if (dlBtn) {
+              dlBtn.onclick = () => {
+                const a = document.createElement("a");
+                a.href = finalCleanUrl;
+                a.download = `zenvyra-clean-${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              };
+            }
+          }
+
+          generateImageBtn.disabled = false;
+          generateImageBtn.innerText = "Generate Clean Image →";
+        }, "image/png");
+      };
+
+      img.onerror = () => {
+        clearInterval(timerInterval);
+        if (imageResult) imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate artwork. Try again.</p>`;
         generateImageBtn.disabled = false;
         generateImageBtn.innerText = "Generate Clean Image →";
-      }
+      };
     });
   }
 
-  // 6. REAL ANIMATED AI VIDEO (DUAL-KEYFRAME OPTICAL MOTION & ZERO WATERMARK)
+  // 6. REAL ANIMATED AI VIDEO (MULTI-KEYFRAME MORPHING & ZERO WATERMARK)
   const videoPrompt = document.getElementById("videoPrompt");
   const generateVideoBtn = document.getElementById("generateVideoBtn");
   const videoResult = document.getElementById("videoResult");
@@ -442,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (videoResult) {
           videoResult.innerHTML = `
             <div style="background: #111827; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-top: 10px;">
-              <p style="color: #f59e0b; font-weight: 700;">🎬 Synthesizing Dynamic Motion Video (${durationSeconds}s)...</p>
+              <p style="color: #f59e0b; font-weight: 700;">🎬 Rendering Dynamic Video (${durationSeconds}s Clip)...</p>
               <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Rendering physical motion shifts & lighting dynamics...</p>
               <p style="font-size: 12.5px; color: #cbd5e1; margin-top: 8px;">Render Timer: <strong style="color: #f59e0b;">${elapsed}s</strong></p>
             </div>
@@ -450,15 +427,59 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }, 100);
 
-      // Generating two distinct keyframes to produce real character motion (not just zoom)
+      // Two distinct seeds for optical subject motion
       const seedA = Math.floor(Math.random() * 1000000);
-      const seedB = seedA + 75;
+      const seedB = seedA + 88;
 
-      const pA = `${cleanSubject}, dynamic motion pose start, realistic physics, 4k cinematic lighting, volumetric smoke, no watermark`;
-      const pB = `${cleanSubject}, dynamic motion shifted action pose, displaced perspective, changed expression, 4k lighting, no watermark`;
+      const pA = `${cleanSubject}, dynamic motion pose start, 4k cinematic lighting, highly detailed, no watermark`;
+      const pB = `${cleanSubject}, dynamic motion shifted action pose, displaced perspective, 4k lighting, no watermark`;
 
-      const urlA = `https://image.pollinations.ai/prompt/${encodeURIComponent(pA)}?width=1280&height=780&seed=${seedA}&nologo=true`;
-      const urlB = `https://image.pollinations.ai/prompt/${encodeURIComponent(pB)}?width=1280&height=780&seed=${seedB}&nologo=true`;
+      const urlA = `https://image.pollinations.ai/prompt/${encodeURIComponent(pA)}?width=1280&height=800&seed=${seedA}&nologo=true`;
+      const urlB = `https://image.pollinations.ai/prompt/${encodeURIComponent(pB)}?width=1280&height=800&seed=${seedB}&nologo=true`;
 
-      const loadBlob = async (url) => {
-        const r = await fetch(url)
+      const loadImg = (url) => new Promise((resolve, reject) => {
+        const i = new Image();
+        i.crossOrigin = "anonymous";
+        i.src = url;
+        i.onload = () => resolve(i);
+        i.onerror = () => reject();
+      });
+
+      try {
+        const [imgA, imgB] = await Promise.all([loadImg(urlA), loadImg(urlB)]);
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const w = 1280;
+        const h = 720;
+        canvas.width = w;
+        canvas.height = h;
+
+        // Cut bottom 85px to strip watermark completely
+        const cropH = imgA.naturalHeight - 85;
+        const cropW = imgA.naturalWidth;
+
+        const stream = canvas.captureStream(30);
+        let mime = "video/webm;codecs=vp9";
+        if (!MediaRecorder.isTypeSupported(mime)) {
+          mime = MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "video/mp4";
+        }
+
+        const recorder = new MediaRecorder(stream, { mimeType: mime });
+        const chunks = [];
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        const totalFrames = durationSeconds * 30;
+        let currentFrame = 0;
+        recorder.start();
+
+        const renderInterval = setInterval(() => {
+          currentFrame++;
+          const progress = currentFrame / totalFrames;
+
+          ctx.clearRect(0, 0, w, h);
+
+          // Keyframe A
+    
