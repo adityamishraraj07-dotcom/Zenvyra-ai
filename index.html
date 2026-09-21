@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI - Creative Studio</title>
-  <link rel="stylesheet" href="style.css?v=9900" />
+  <link rel="stylesheet" href="style.css?v=1001" />
 </head>
 <body>
   <div class="app-wrapper">
@@ -37,24 +37,24 @@
       <p>💬 Intelligent conversation & scripting in Hindi & English</p>
       <p>🎨 High-resolution creative image generation (No Watermark)</p>
       <p>🎙️ Natural sounding multi-persona AI voices & MP3 save</p>
-      <p>🎬 Instant AI video scene creation from prompts (Auto-detected duration)</p>
+      <p>🎬 Instant AI video scene creation from prompts</p>
     </section>
 
     <!-- 4 Navigation Tabs -->
     <nav class="nav-switcher">
-      <button class="nav-btn active" data-page="chat">
+      <button class="nav-btn active" data-page="chat" type="button">
         <span class="icon">💬</span>
         <span class="label">AI Chat</span>
       </button>
-      <button class="nav-btn" data-page="image">
+      <button class="nav-btn" data-page="image" type="button">
         <span class="icon">🎨</span>
         <span class="label">Image</span>
       </button>
-      <button class="nav-btn" data-page="voice">
+      <button class="nav-btn" data-page="voice" type="button">
         <span class="icon">🎙️</span>
         <span class="label">AI Voice</span>
       </button>
-      <button class="nav-btn" data-page="video">
+      <button class="nav-btn" data-page="video" type="button">
         <span class="icon">🎬</span>
         <span class="label">Video</span>
       </button>
@@ -63,7 +63,7 @@
     <!-- Main Dynamic Workspace -->
     <main class="workspace">
       <!-- 1. AI CHAT TAB -->
-      <div id="chatPage" class="content-page active">
+      <div id="chatPage" class="content-page" style="display: flex;">
         <div class="card-hero">
           <div class="hero-top">
             <span class="badge">✦ Zenvyra Assistant</span>
@@ -84,7 +84,7 @@
         </div>
       </div>
 
-      <!-- 2. IMAGE GENERATOR TAB (CLEAN & NO WATERMARK) -->
+      <!-- 2. IMAGE GENERATOR TAB -->
       <div id="imagePage" class="content-page" style="display: none;">
         <div class="card-hero">
           <span class="badge">✦ Flux Ultra-Detail</span>
@@ -93,7 +93,7 @@
         </div>
 
         <div class="input-card">
-          <textarea id="imagePrompt" placeholder="Describe your image in detail (e.g. Cyberpunk samurai standing in neon rain, 8k masterpiece)..." rows="3"></textarea>
+          <textarea id="imagePrompt" placeholder="Describe your image in detail..." rows="3"></textarea>
           <select id="aspectRatio" class="ratio-dropdown">
             <option value="1:1">Square (1:1)</option>
             <option value="16:9">Landscape (16:9)</option>
@@ -105,7 +105,7 @@
         <div id="imageResult" class="result-area"></div>
       </div>
 
-      <!-- 3. REAL AI VOICE STUDIO -->
+      <!-- 3. AI VOICE STUDIO -->
       <div id="voicePage" class="content-page" style="display: none;">
         <div class="card-hero">
           <span class="badge">✦ Neural Voice Studio</span>
@@ -134,16 +134,16 @@
         <div id="voiceStatus" class="result-area"></div>
       </div>
 
-      <!-- 4. REAL AI VIDEO GENERATOR (PROMPT-DRIVEN EXACT DURATION) -->
+      <!-- 4. AI VIDEO GENERATOR -->
       <div id="videoPage" class="content-page" style="display: none;">
         <div class="card-hero">
           <span class="badge">✦ Motion Video Engine</span>
           <h2>AI Video Generator</h2>
-          <p>Specify the duration directly in your prompt (e.g. "Create a 7 second video of...").</p>
+          <p>Specify duration directly in prompt (e.g. "Create a 6 second video of...").</p>
         </div>
 
         <div class="input-card">
-          <textarea id="videoPrompt" placeholder="Describe the video & seconds (e.g. Create a 6 second video of a futuristic car racing through rainy neon city)..." rows="3"></textarea>
+          <textarea id="videoPrompt" placeholder="Describe video & seconds (e.g. Create a 6 second video of futuristic car in rain)..." rows="3"></textarea>
           <button id="generateVideoBtn" class="btn-primary full-width" type="button">🎬 Generate Video →</button>
         </div>
 
@@ -152,6 +152,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=9900"></script>
+  <script src="app.js?v=1001"></script>
 </body>
 </html>
