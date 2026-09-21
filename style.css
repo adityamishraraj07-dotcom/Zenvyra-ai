@@ -1,4 +1,4 @@
-/* ================= ACCORDING TO USER EXACT WIREFRAME ================= */
+/* ================= FULL SCREEN EXPANDED VIEW ================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,60 +6,63 @@
 }
 
 html, body {
+  height: 100%;
   min-height: 100%;
-  background: #090d16;
+  background: #080c14;
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow-x: hidden;
+  overflow: hidden; /* Scroll lock taaki screen fit rahe */
 }
 
 .app-wrapper {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 18px 16px 20px 16px;
-  max-width: 520px;
+  padding: 16px 16px 14px 16px;
+  max-width: 500px;
   margin: 0 auto;
-  gap: 16px;
+  gap: 12px;
 }
 
-/* 1. Top Title (Red Circle) */
+/* 1. Big Title (Doosre photo jaisa) */
 .app-header {
   text-align: center;
-  padding-top: 4px;
+  flex-shrink: 0;
 }
 
 .brand-title {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.5px;
 }
 
-/* 2. About Box (Top Green Circle) */
+/* 2. Roomy About Box */
 .about-card {
+  flex-shrink: 0;
   background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .about-card p {
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.45;
   color: #cbd5e1;
   font-weight: 500;
 }
 
-/* 3. Three Navigation Tabs (Blue/Red Circle) */
+/* 3. Big Action Switcher Tabs */
 .nav-switcher {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .nav-btn {
@@ -68,18 +71,18 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   padding: 12px 6px;
   background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  border-radius: 16px;
   color: #94a3b8;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .nav-btn .icon {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .nav-btn .label {
@@ -91,25 +94,27 @@ html, body {
   background: #ffffff;
   color: #090d16;
   border-color: #ffffff;
-  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
 }
 
-/* 4. Active Card Section (Purple & White Circles) */
+/* 4. Main Interactive Area - Expands to Fill Bottom Space */
 .workspace {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .content-page {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  height: 100%;
+  gap: 10px;
   width: 100%;
 }
 
 .card-hero {
-  text-align: left;
+  flex-shrink: 0;
 }
 
 .badge {
@@ -120,49 +125,90 @@ html, body {
   border-radius: 20px;
   background: rgba(99, 102, 241, 0.15);
   color: #818cf8;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .card-hero h2 {
   font-size: 22px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .card-hero p {
-  font-size: 14px;
+  font-size: 13.5px;
   color: #94a3b8;
 }
 
 .chat-display {
+  flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 160px;
-  overflow-y: auto;
+  gap: 8px;
+  min-height: 0;
 }
 
+/* 5. Input Card Fills Remaining Screen */
 .input-card {
+  flex: 1;
+  min-height: 160px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
   background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  padding: 14px;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 2px;
 }
 
 textarea {
   width: 100%;
-  min-height: 100px;
+  flex: 1;
+  min-height: 80px;
   background: transparent;
   border: none;
   outline: none;
   color: #ffffff;
-  font-size: 15px;
-  line-height: 1.4;
+  font-size: 16px;
+  line-height: 1.45;
   resize: none;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-primary {
+  flex: 2;
+  padding: 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #ffffff;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 16px;
+  border-radius: 14px;
+  background: #1e293b;
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
 }
 
 .ratio-dropdown {
@@ -174,52 +220,9 @@ textarea {
   border-radius: 12px;
   font-size: 14px;
   outline: none;
+  margin-bottom: 8px;
 }
 
-.button-row {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-primary {
-  flex: 2;
-  padding: 14px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
-  color: #ffffff;
-  border: none;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
-}
-
-.btn-secondary {
-  flex: 1;
-  padding: 14px;
-  border-radius: 12px;
-  background: #1e293b;
-  color: #f1f5f9;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.result-area {
-  margin-top: 14px;
-  text-align: center;
-}
-
-/* 5. Footer (Bottom Balance) */
 .app-footer {
-  text-align: center;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 12px;
-  color: #64748b;
+  display: none;
 }
