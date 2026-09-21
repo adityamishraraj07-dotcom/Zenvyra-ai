@@ -62,9 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(query)}?model=openai`);
       const data = await response.text();
-      appendMessage("ai", data || "Zenvyra AI response could not be generated.");
+      appendMessage("ai", data || "No response received from the server.");
     } catch (err) {
-      appendMessage("ai", "Sorry, an error occurred while connecting to server.");
+      appendMessage("ai", "An error occurred while communicating with the server.");
     } finally {
       sendChatBtn.disabled = false;
       sendChatBtn.innerText = "Send →";
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (voiceBtn && ("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = "hi-IN";
+    recognition.lang = "en-IN";
 
     voiceBtn.addEventListener("click", () => {
       try {
@@ -107,17 +107,17 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
   }
 
-  // 4. REAL AI VOICE GENERATOR & INSTANT AUDIO DOWNLOAD
+  // 4. AI Voice Generator & Instant Audio Download
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
   const downloadVoiceBtn = document.getElementById("downloadVoiceBtn");
   const voiceStatus = document.getElementById("voiceStatus");
 
-  let localVoices = [];
+  let systemVoices = [];
   function syncVoices() {
     if ("speechSynthesis" in window) {
-      localVoices = window.speechSynthesis.getVoices();
+      systemVoices = window.speechSynthesis.getVoices();
     }
   }
   syncVoices();
@@ -125,10 +125,35 @@ document.addEventListener("DOMContentLoaded", () => {
     window.speechSynthesis.onvoiceschanged = syncVoices;
   }
 
-  // Generate Audio File Buffer for Direct Download
-  function createAudioWav(text, pitch, rate) {
+  function getAcousticConfig(voiceType) {
+    switch (voiceType) {
+      case "in_female_soft":
+        return { pitch: 1.45, rate: 1.0, lang: "hi-IN" };
+      case "in_female_expressive":
+        return { pitch: 1.25, rate: 0.95, lang: "hi-IN" };
+      case "in_female_pro":
+        return { pitch: 1.1, rate: 1.05, lang: "en-IN" };
+      case "in_male_deep":
+        return { pitch: 0.65, rate: 0.9, lang: "hi-IN" };
+      case "in_male_young":
+        return { pitch: 0.95, rate: 1.15, lang: "en-IN" };
+      case "in_male_broadcast":
+        return { pitch: 0.8, rate: 1.0, lang: "en-IN" };
+      case "us_female":
+        return { pitch: 1.2, rate: 1.0, lang: "en-US" };
+      case "us_male":
+        return { pitch: 0.7, rate: 0.95, lang: "en-US" };
+      case "uk_male":
+        return { pitch: 0.9, rate: 1.0, lang: "en-GB" };
+      default:
+        return { pitch: 1.0, rate: 1.0, lang: "en-IN" };
+    }
+  }
+
+  // Generate Audio WAV Buffer
+  function generateWavAudio(text, pitch, rate) {
     const sampleRate = 22050;
-    const duration = Math.max(1.2, text.length * 0.09 * (1 / rate));
+    const duration = Math.max(1.2, text.length * 0.08 * (1 / rate));
     const numSamples = Math.floor(sampleRate * duration);
     const buffer = new ArrayBuffer(44 + numSamples * 2);
     const view = new DataView(buffer);
@@ -166,71 +191,35 @@ document.addEventListener("DOMContentLoaded", () => {
     return new Blob([view], { type: "audio/wav" });
   }
 
-  function getVoiceSettings(selectedVoice) {
-    let pitch = 1.0;
-    let rate = 1.0;
-    let lang = "hi-IN";
-
-    if (selectedVoice === "Aditi") {
-      pitch = 1.45;
-      rate = 1.0;
-    } else if (selectedVoice === "Kajal") {
-      pitch = 1.2;
-      rate = 0.95;
-    } else if (selectedVoice === "Raveena") {
-      pitch = 1.05;
-      rate = 1.05;
-    } else if (selectedVoice === "hi_male_deep") {
-      pitch = 0.65;
-      rate = 0.9;
-    } else if (selectedVoice === "hi_male_young") {
-      pitch = 0.95;
-      rate = 1.15;
-    } else if (selectedVoice === "hi_male_news") {
-      pitch = 0.8;
-      rate = 1.0;
-    } else if (selectedVoice === "Joanna") {
-      pitch = 1.25;
-      lang = "en-US";
-    } else if (selectedVoice === "Matthew") {
-      pitch = 0.7;
-      lang = "en-US";
-    } else {
-      pitch = 0.9;
-      lang = "en-GB";
-    }
-
-    return { pitch, rate, lang };
-  }
-
-  // Generate & Play Voice Action
+  // 1. Play Voice Button
   if (playVoiceBtn) {
     playVoiceBtn.addEventListener("click", () => {
       const text = voiceTextPrompt.value.trim();
       if (!text) {
-        alert("Pehle script ya message likhiye!");
+        alert("Please enter text or script to speak.");
         return;
       }
 
-      const selectedVoice = voiceVoiceSelect.value;
-      const settings = getVoiceSettings(selectedVoice);
+      const voice = voiceVoiceSelect.value;
+      const cfg = getAcousticConfig(voice);
 
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = settings.lang;
-        utterance.pitch = settings.pitch;
-        utterance.rate = settings.rate;
+        utterance.lang = cfg.lang;
+        utterance.pitch = cfg.pitch;
+        utterance.rate = cfg.rate;
 
-        const matchedVoice = localVoices.find(v => v.lang.toLowerCase().includes(settings.lang.toLowerCase().replace("-", "_")) || v.lang.toLowerCase().includes(settings.lang.toLowerCase()));
-        if (matchedVoice) {
-          utterance.voice = matchedVoice;
+        const targetLang = cfg.lang.toLowerCase().replace("-", "_");
+        const matched = systemVoices.find(v => v.lang.toLowerCase().includes(targetLang) || v.lang.toLowerCase().includes(cfg.lang.toLowerCase()));
+        if (matched) {
+          utterance.voice = matched;
         }
 
-        voiceStatus.innerHTML = "<span style='color: #818cf8;'>Speaking voice now...</span>";
+        voiceStatus.innerHTML = "<span style='color: #818cf8;'>Playing voice audio...</span>";
 
         utterance.onend = () => {
-          voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Voice playback completed!</span>";
+          voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Voice playback completed.</span>";
         };
 
         window.speechSynthesis.speak(utterance);
@@ -238,36 +227,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // DOWNLOAD AUDIO DIRECT TRIGGER (Always Works, Never Hidden)
+  // 2. Download Audio Button (Always Generates & Downloads Directly)
   if (downloadVoiceBtn) {
     downloadVoiceBtn.addEventListener("click", () => {
       const text = voiceTextPrompt.value.trim();
       if (!text) {
-        alert("Pehle text likhiye jiska audio download karna hai!");
+        alert("Please enter text or script to download.");
         return;
       }
 
-      downloadVoiceBtn.innerText = "⏳ Preparing Download...";
-      const selectedVoice = voiceVoiceSelect.value;
-      const settings = getVoiceSettings(selectedVoice);
+      downloadVoiceBtn.innerText = "⏳ Generating File...";
+      const voice = voiceVoiceSelect.value;
+      const cfg = getAcousticConfig(voice);
 
-      const audioBlob = createAudioWav(text, settings.pitch, settings.rate);
-      const blobUrl = URL.createObjectURL(audioBlob);
+      const blob = generateWavAudio(text, cfg.pitch, cfg.rate);
+      const blobUrl = URL.createObjectURL(blob);
 
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = blobUrl;
-      a.download = `zenvyra-audio-${selectedVoice}-${Date.now()}.wav`;
+      const link = document.createElement("a");
+      link.style.display = "none";
+      link.href = blobUrl;
+      link.download = `zenvyra-audio-${voice}-${Date.now()}.wav`;
 
-      document.body.appendChild(a);
-      a.click();
+      document.body.appendChild(link);
+      link.click();
 
       setTimeout(() => {
-        document.body.removeChild(a);
+        document.body.removeChild(link);
         URL.revokeObjectURL(blobUrl);
         downloadVoiceBtn.innerText = "⬇️ Download Audio File";
         voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Audio downloaded to your device!</span>";
-      }, 700);
+      }, 500);
     });
   }
 
@@ -280,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (generateImageBtn) {
     generateImageBtn.addEventListener("click", async () => {
       const prompt = imagePrompt.value.trim();
-      if (!prompt) return alert("Please enter an image description!");
+      if (!prompt) return alert("Please enter an image description.");
 
       generateImageBtn.disabled = true;
       generateImageBtn.innerText = "Creating Artwork...";
@@ -308,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       img.onerror = () => {
-        imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate image. Try again.</p>`;
+        imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate image. Please try again.</p>`;
         generateImageBtn.disabled = false;
         generateImageBtn.innerText = "Generate with AI →";
       };
@@ -323,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (generateVideoBtn) {
     generateVideoBtn.addEventListener("click", () => {
       const prompt = videoPrompt.value.trim();
-      if (!prompt) return alert("Please enter scene description!");
+      if (!prompt) return alert("Please enter scene description.");
 
       generateVideoBtn.disabled = true;
       generateVideoBtn.innerText = "Rendering Scene...";
@@ -342,4 +331,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-      
+    
