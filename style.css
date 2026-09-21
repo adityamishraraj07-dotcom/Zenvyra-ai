@@ -1,4 +1,4 @@
-/* ================= FULL SCREEN EXPANDED VIEW ================= */
+/* ================= EXACT SCREEN-FIT MOBILE UI ================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,57 +7,58 @@
 
 html, body {
   height: 100%;
-  min-height: 100%;
-  background: #080c14;
+  min-height: 100dvh;
+  background: #090d16;
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow: hidden; /* Scroll lock taaki screen fit rahe */
+  overflow-x: hidden;
 }
 
 .app-wrapper {
-  height: 100vh;
-  height: 100dvh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: 16px 16px 14px 16px;
-  max-width: 500px;
+  justify-content: space-between;
+  padding: 20px 18px 24px 18px;
+  max-width: 480px;
   margin: 0 auto;
-  gap: 12px;
+  gap: 16px;
 }
 
-/* 1. Big Title (Doosre photo jaisa) */
+/* 1. Header Title */
 .app-header {
   text-align: center;
   flex-shrink: 0;
+  padding-top: 4px;
 }
 
 .brand-title {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.5px;
 }
 
-/* 2. Roomy About Box */
+/* 2. Spacious 5-Line About Box */
 .about-card {
   flex-shrink: 0;
   background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  padding: 14px 16px;
+  border-radius: 20px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .about-card p {
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.45;
   color: #cbd5e1;
   font-weight: 500;
 }
 
-/* 3. Big Action Switcher Tabs */
+/* 3. Three Navigation Tabs */
 .nav-switcher {
   display: flex;
   gap: 10px;
@@ -72,21 +73,21 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px 6px;
+  padding: 14px 6px;
   background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  border-radius: 18px;
   color: #94a3b8;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .nav-btn .icon {
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .nav-btn .label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -94,22 +95,22 @@ html, body {
   background: #ffffff;
   color: #090d16;
   border-color: #ffffff;
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.2);
 }
 
-/* 4. Main Interactive Area - Expands to Fill Bottom Space */
+/* 4. Active Interactive Area */
 .workspace {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .content-page {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
 }
 
@@ -119,54 +120,50 @@ html, body {
 
 .badge {
   display: inline-block;
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 4px 12px;
+  font-size: 12px;
   font-weight: 600;
   border-radius: 20px;
-  background: rgba(99, 102, 241, 0.15);
+  background: rgba(99, 102, 241, 0.18);
   color: #818cf8;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .card-hero h2 {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .card-hero p {
-  font-size: 13.5px;
+  font-size: 14px;
   color: #94a3b8;
+  line-height: 1.4;
 }
 
 .chat-display {
-  flex: 1;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-height: 0;
+  gap: 10px;
+  max-height: 140px;
+  overflow-y: auto;
 }
 
-/* 5. Input Card Fills Remaining Screen */
+/* 5. Big Bottom Input Card */
 .input-card {
-  flex: 1;
-  min-height: 160px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 12px;
   background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 16px;
-  margin-bottom: 2px;
+  border-radius: 22px;
+  padding: 18px;
 }
 
 textarea {
   width: 100%;
-  flex: 1;
-  min-height: 80px;
+  min-height: 90px;
   background: transparent;
   border: none;
   outline: none;
@@ -179,7 +176,6 @@ textarea {
 .button-row {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
 }
 
 .btn-primary {
@@ -213,14 +209,13 @@ textarea {
 
 .ratio-dropdown {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: #090d16;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #ffffff;
-  border-radius: 12px;
-  font-size: 14px;
+  border-radius: 14px;
+  font-size: 15px;
   outline: none;
-  margin-bottom: 8px;
 }
 
 .app-footer {
