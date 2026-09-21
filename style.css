@@ -1,4 +1,4 @@
-/* ================= FULL SCREEN RESPONSIVE APP ================= */
+/* ================= ACCORDING TO USER EXACT WIREFRAME ================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,206 +6,220 @@
 }
 
 html, body {
-  height: 100%;
-  min-height: 100dvh;
-  background: #080c14;
-  color: #f8fafc;
+  min-height: 100%;
+  background: #090d16;
+  color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
 }
 
-.app {
+.app-wrapper {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 100dvh;
-  padding: 16px 16px 20px 16px;
-  max-width: 600px;
+  padding: 18px 16px 20px 16px;
+  max-width: 520px;
   margin: 0 auto;
+  gap: 16px;
 }
 
-/* 1. Header Section */
-.hero-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* 1. Top Title (Red Circle) */
+.app-header {
   text-align: center;
-  width: 100%;
-  gap: 12px;
+  padding-top: 4px;
 }
 
-.brand-hero-title {
-  font-size: 32px;
+.brand-title {
+  font-size: 30px;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.5px;
 }
 
-.hero-description {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.04);
+/* 2. About Box (Top Green Circle) */
+.about-card {
+  background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: 14px 16px;
-  width: 100%;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
-.hero-description p {
-  font-size: 13.5px;
+.about-card p {
+  font-size: 13px;
   line-height: 1.45;
   color: #cbd5e1;
   font-weight: 500;
 }
 
-/* 2. Top Navigation Tabs */
-.nav {
+/* 3. Three Navigation Tabs (Blue/Red Circle) */
+.nav-switcher {
   display: flex;
+  gap: 8px;
   width: 100%;
-  gap: 10px;
-  margin-top: 4px;
 }
 
-.nav-item {
+.nav-btn {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   padding: 12px 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #94a3b8;
   background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
-  text-decoration: none;
+  color: #94a3b8;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.nav-item .nav-icon {
+.nav-btn .icon {
   font-size: 18px;
 }
 
-.nav-item.active {
+.nav-btn .label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nav-btn.active {
   background: #ffffff;
   color: #090d16;
   border-color: #ffffff;
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
 }
 
-/* 3. Main Area - Expands to Fill Center & Bottom */
-.main {
+/* 4. Active Card Section (Purple & White Circles) */
+.workspace {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  margin-top: 14px;
 }
 
-.page {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: space-between;
-}
-
-.badge {
-  display: inline-block;
-  padding: 5px 12px;
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.chat-welcome {
-  margin-bottom: 12px;
-}
-
-.chat-welcome h2 {
-  font-size: 24px;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 6px;
-}
-
-.chat-welcome p {
-  font-size: 14px;
-  color: #94a3b8;
-  line-height: 1.5;
-}
-
-.chat-messages {
-  flex: 1;
-  min-height: 40px;
-  max-height: 200px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-/* 4. Large Roomy Input Box & Action Buttons */
-.chat-input-container {
+.content-page {
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 100%;
 }
 
+.card-hero {
+  text-align: left;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  margin-bottom: 6px;
+}
+
+.card-hero h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.card-hero p {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.chat-display {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.input-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 14px;
+}
+
 textarea {
   width: 100%;
-  min-height: 140px;
-  border-radius: 18px;
-  background: #111827;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #ffffff;
-  padding: 16px;
-  font-size: 16px;
+  min-height: 100px;
+  background: transparent;
+  border: none;
   outline: none;
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 1.4;
   resize: none;
 }
 
-textarea:focus {
-  border-color: #6366f1;
+.ratio-dropdown {
+  width: 100%;
+  padding: 12px;
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
 }
 
-.chat-controls {
+.button-row {
   display: flex;
   gap: 10px;
-  width: 100%;
 }
 
-.primary-btn {
+.btn-primary {
   flex: 2;
-  padding: 16px;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: 14px;
+  padding: 14px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #6366f1, #a855f7);
   color: #ffffff;
   border: none;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
 }
 
-.secondary-btn {
+.btn-secondary {
   flex: 1;
-  padding: 16px;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 14px;
+  padding: 14px;
+  border-radius: 12px;
   background: #1e293b;
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  }
-                         
+}
+
+.full-width {
+  width: 100%;
+}
+
+.result-area {
+  margin-top: 14px;
+  text-align: center;
+}
+
+/* 5. Footer (Bottom Balance) */
+.app-footer {
+  text-align: center;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 12px;
+  color: #64748b;
+}
