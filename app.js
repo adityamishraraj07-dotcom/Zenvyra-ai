@@ -107,69 +107,62 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
   }
 
-  // 4. REAL NEURAL AI VOICE GENERATOR (Distinct Audio Streams)
+  // 4. REAL AI VOICE GENERATION & MP3 DOWNLOAD (StreamElements Amazon Polly Engine)
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
   const realAudioPlayer = document.getElementById("realAudioPlayer");
   const audioPlayerContainer = document.getElementById("audioPlayerContainer");
+  const downloadVoiceBtn = document.getElementById("downloadVoiceBtn");
   const voiceStatus = document.getElementById("voiceStatus");
 
   if (playVoiceBtn) {
-    playVoiceBtn.addEventListener("click", async () => {
+    playVoiceBtn.addEventListener("click", () => {
       const text = voiceTextPrompt.value.trim();
       if (!text) {
-        alert("Please enter text to speak!");
+        alert("Please enter text or script to generate voice!");
         return;
       }
 
       const voice = voiceVoiceSelect.value;
       playVoiceBtn.disabled = true;
-      playVoiceBtn.innerText = "Generating Neural Voice...";
-      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Generating real audio...</span>";
+      playVoiceBtn.innerText = "Generating Audio...";
+      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Synthesizing voice audio...</span>";
 
-      try {
-        let audioUrl = "";
+      // Real Neural Voice MP3 Stream (CORS-friendly, genuine accents)
+      let voiceName = voice;
+      if (voice === "hi_male") {
+        voiceName = "Aditi"; // High quality Indian English/Hindi
+      }
 
-        if (voice.startsWith("hi")) {
-          // Direct high-clarity Indian Hindi Audio Stream
-          audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=hi&client=tw-ob&q=${encodeURIComponent(text)}`;
-        } else if (voice.includes("GB")) {
-          // British English Voice Stream
-          audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-gb&client=tw-ob&q=${encodeURIComponent(text)}`;
-        } else {
-          // US English Voice Stream
-          audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-us&client=tw-ob&q=${encodeURIComponent(text)}`;
-        }
+      const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=${encodeURIComponent(voiceName)}&text=${encodeURIComponent(text)}`;
 
-        realAudioPlayer.src = audioUrl;
-        audioPlayerContainer.style.display = "block";
-        
-        await realAudioPlayer.play();
-        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing generated voice!</span>";
-      } catch (err) {
-        // Fallback to Web Speech API with pitch modulation for distinct voices
+      realAudioPlayer.src = audioUrl;
+      downloadVoiceBtn.href = audioUrl;
+      audioPlayerContainer.style.display = "flex";
+
+      realAudioPlayer.oncanplay = () => {
+        realAudioPlayer.play().catch(() => {});
+        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Voice ready & playing!</span>";
+        playVoiceBtn.disabled = false;
+        playVoiceBtn.innerText = "🎵 Generate Voice Audio →";
+      };
+
+      realAudioPlayer.onerror = () => {
+        // Safe fallback to native engine if network stalls
         if ("speechSynthesis" in window) {
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(text);
-          if (voice.includes("Female") || voice.includes("Jenny") || voice.includes("Swara")) {
-            utterance.pitch = 1.4;
-            utterance.rate = 0.95;
-          } else {
-            utterance.pitch = 0.65;
-            utterance.rate = 0.9;
-          }
-          if (voice.startsWith("hi")) utterance.lang = "hi-IN";
+          if (voice.includes("hi")) utterance.lang = "hi-IN";
           else utterance.lang = "en-US";
           window.speechSynthesis.speak(utterance);
-          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing voice!</span>";
+          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Voice played!</span>";
         } else {
-          voiceStatus.innerHTML = "<span style='color: #ef4444;'>Playback error.</span>";
+          voiceStatus.innerHTML = "<span style='color: #ef4444;'>Audio generation failed. Try again.</span>";
         }
-      } finally {
         playVoiceBtn.disabled = false;
-        playVoiceBtn.innerText = "🎵 Generate & Play Voice";
-      }
+        playVoiceBtn.innerText = "🎵 Generate Voice Audio →";
+      };
     });
   }
 
@@ -244,4 +237,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-          
+        
