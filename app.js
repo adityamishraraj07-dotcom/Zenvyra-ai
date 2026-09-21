@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
     msgEl.style.fontSize = "14px";
     msgEl.style.lineHeight = "1.4";
     msgEl.style.wordBreak = "break-word";
-    msgEl.style.position = "relative";
 
     if (sender === "user") {
       msgEl.style.background = "#1e293b";
@@ -53,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       msgEl.style.color = "#e2e8f0";
       msgEl.style.alignSelf = "flex-start";
       msgEl.style.maxWidth = "90%";
-      msgEl.innerHTML = `<strong>Zenvyra AI:</strong> ${text} <br/><button class="listen-btn" style="margin-top: 6px; padding: 3px 8px; font-size: 11px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; color: #fff; cursor: pointer;">🔊 Listen</button>`;
+      msgEl.innerHTML = `<strong>Zenvyra AI:</strong> ${text} <br/><button class="listen-btn" style="margin-top: 6px; padding: 4px 10px; font-size: 11px; background: rgba(255,255,255,0.12); border: none; border-radius: 6px; color: #fff; cursor: pointer;">🔊 Listen</button>`;
       
       const listenBtn = msgEl.querySelector(".listen-btn");
       if (listenBtn) {
@@ -122,18 +121,30 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
   }
 
-  // 4. AI Voice Generator (Text-to-Speech Studio)
+  // 4. MULTI-STYLE AI VOICE GENERATOR (ADVANCED PERSONAS)
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
+  const voiceSpeed = document.getElementById("voiceSpeed");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
   const stopVoiceBtn = document.getElementById("stopVoiceBtn");
   const voiceStatus = document.getElementById("voiceStatus");
+
+  let availableVoices = [];
+  function populateVoices() {
+    if ("speechSynthesis" in window) {
+      availableVoices = window.speechSynthesis.getVoices();
+    }
+  }
+  populateVoices();
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+  }
 
   if (playVoiceBtn) {
     playVoiceBtn.addEventListener("click", () => {
       const text = voiceTextPrompt.value.trim();
       if (!text) {
-        alert("Please enter text for AI to speak!");
+        alert("Please enter script or text to speak!");
         return;
       }
 
@@ -144,30 +155,83 @@ document.addEventListener("DOMContentLoaded", () => {
 
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      const selectedVoiceType = voiceVoiceSelect.value;
+      const persona = voiceVoiceSelect.value;
+      const speed = parseFloat(voiceSpeed.value) || 1.0;
 
-      // Select matching voice
-      const voices = window.speechSynthesis.getVoices();
-      if (selectedVoiceType === "hindi") {
-        utterance.lang = "hi-IN";
-      } else if (selectedVoiceType === "english_female") {
-        utterance.lang = "en-US";
-        utterance.pitch = 1.2;
-      } else {
-        utterance.lang = "en-US";
-        utterance.pitch = 0.9;
+      utterance.rate = speed;
+
+      // Filter and assign acoustic profiles
+      const hindiVoice = availableVoices.find(v => v.lang.includes("hi") || v.lang.includes("HI"));
+      const engUsVoice = availableVoices.find(v => v.lang.includes("en-US") || v.lang.includes("en_US"));
+      const engUkVoice = availableVoices.find(v => v.lang.includes("en-GB") || v.lang.includes("en_GB"));
+
+      switch (persona) {
+        case "hi_female_soft":
+          if (hindiVoice) utterance.voice = hindiVoice;
+          utterance.lang = "hi-IN";
+          utterance.pitch = 1.35;
+          break;
+
+        case "hi_male_deep":
+          if (hindiVoice) utterance.voice = hindiVoice;
+          utterance.lang = "hi-IN";
+          utterance.pitch = 0.75;
+          break;
+
+        case "hi_male_young":
+          if (hindiVoice) utterance.voice = hindiVoice;
+          utterance.lang = "hi-IN";
+          utterance.pitch = 1.05;
+          break;
+
+        case "hi_storyteller":
+          if (hindiVoice) utterance.voice = hindiVoice;
+          utterance.lang = "hi-IN";
+          utterance.pitch = 0.85;
+          utterance.rate = speed * 0.9;
+          break;
+
+        case "en_female_warm":
+          if (engUsVoice) utterance.voice = engUsVoice;
+          utterance.lang = "en-US";
+          utterance.pitch = 1.25;
+          break;
+
+        case "en_male_cinematic":
+          if (engUsVoice) utterance.voice = engUsVoice;
+          utterance.lang = "en-US";
+          utterance.pitch = 0.65;
+          break;
+
+        case "en_energetic":
+          if (engUsVoice) utterance.voice = engUsVoice;
+          utterance.lang = "en-US";
+          utterance.pitch = 1.15;
+          utterance.rate = speed * 1.15;
+          break;
+
+        case "en_uk_premium":
+          if (engUkVoice) utterance.voice = engUkVoice;
+          else if (engUsVoice) utterance.voice = engUsVoice;
+          utterance.lang = "en-GB";
+          utterance.pitch = 0.95;
+          break;
+
+        default:
+          utterance.lang = "en-US";
+          utterance.pitch = 1.0;
       }
 
       utterance.onstart = () => {
-        voiceStatus.innerHTML = "🔊 <span style='color: #6366f1;'>Speaking now...</span>";
+        voiceStatus.innerHTML = `🔊 <span style="color: #6366f1; font-weight: 600;">Speaking in selected voice profile...</span>`;
       };
 
       utterance.onend = () => {
-        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Finished playback.</span>";
+        voiceStatus.innerHTML = `<span style="color: #10b981; font-weight: 600;">✓ Voice generated successfully!</span>`;
       };
 
       utterance.onerror = () => {
-        voiceStatus.innerHTML = "<span style='color: #ef4444;'>Playback error.</span>";
+        voiceStatus.innerHTML = `<span style="color: #ef4444;">Could not play audio. Check browser permissions.</span>`;
       };
 
       window.speechSynthesis.speak(utterance);
@@ -177,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (stopVoiceBtn) {
     stopVoiceBtn.addEventListener("click", () => {
       window.speechSynthesis.cancel();
-      voiceStatus.innerText = "Playback stopped.";
+      voiceStatus.innerText = "⏹️ Voice stopped.";
     });
   }
 
@@ -252,4 +316,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-        
+    
