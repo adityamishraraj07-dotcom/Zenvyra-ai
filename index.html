@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=999" />
+  <link rel="stylesheet" href="style.css?v=1100" />
 </head>
 <body>
   <div class="app-wrapper">
@@ -18,7 +18,7 @@
       <p>⚡ Next-gen all-in-one creative AI studio</p>
       <p>💬 Intelligent conversation & scripting in Hindi & English</p>
       <p>🎨 High-resolution creative image generation</p>
-      <p>🎙️ Real Neural AI Voices (Hindi & English)</p>
+      <p>🎙️ Real Neural AI Voice & Instant MP3 Download</p>
       <p>🎬 Instant AI video scene creation from prompts</p>
     </section>
 
@@ -87,32 +87,40 @@
       <!-- 3. REAL NEURAL AI VOICE TAB -->
       <div id="voicePage" class="content-page" style="display: none;">
         <div class="card-hero">
-          <span class="badge">✦ Neural Audio Engine</span>
+          <span class="badge">✦ Neural Audio Studio</span>
           <h2>Real AI Voice Generator</h2>
-          <p>Select different voice personas for genuine tone changes.</p>
+          <p>Generate distinct human-like voices and download the MP3.</p>
         </div>
 
         <div class="input-card">
-          <textarea id="voiceTextPrompt" placeholder="Type what you want the AI voice to speak..." rows="3"></textarea>
+          <textarea id="voiceTextPrompt" placeholder="Type script or message to speak in Hindi or English..." rows="3"></textarea>
           
           <select id="voiceVoiceSelect" class="ratio-dropdown">
-            <option value="hi-IN-Swara">🇮🇳 Hindi - Female (Priya / Natural)</option>
-            <option value="hi-IN-Madhur">🇮🇳 Hindi - Male (Aarav / Deep)</option>
-            <option value="en-US-Jenny">🇺🇸 English - Female (Jenny / American)</option>
-            <option value="en-US-Guy">🇺🇸 English - Male (Guy / Deep Narration)</option>
-            <option value="en-GB-Sonia">🇬🇧 English - British Female (Classy)</option>
-            <option value="en-GB-Ryan">🇬🇧 English - British Male (Podcast)</option>
+            <optgroup label="🇮🇳 Hindi Voices">
+              <option value="Aditi">🇮🇳 Hindi - Female (Aditi / Sweet)</option>
+              <option value="hi_male">🇮🇳 Hindi - Male (Aarav / Deep)</option>
+            </optgroup>
+            <optgroup label="🇺🇸 US English Voices">
+              <option value="Joanna">🇺🇸 English - Joanna (Natural Female)</option>
+              <option value="Matthew">🇺🇸 English - Matthew (Deep Narration Male)</option>
+              <option value="Salli">🇺🇸 English - Salli (Casual Female)</option>
+            </optgroup>
+            <optgroup label="🇬🇧 British English Voices">
+              <option value="Amy">🇬🇧 English - Amy (British Female)</option>
+              <option value="Brian">🇬🇧 English - Brian (British Male Podcast)</option>
+            </optgroup>
           </select>
 
-          <button id="playVoiceBtn" class="btn-primary full-width" type="button">🎵 Generate & Play Voice</button>
+          <button id="playVoiceBtn" class="btn-primary full-width" type="button">🎵 Generate Voice Audio →</button>
         </div>
 
-        <!-- Audio Player Box -->
-        <div id="audioPlayerContainer" style="margin-top: 14px; width: 100%; text-align: center; display: none;">
-          <audio id="realAudioPlayer" controls style="width: 100%; border-radius: 12px;"></audio>
+        <!-- Working Audio Player & Download Button -->
+        <div id="audioPlayerContainer" style="margin-top: 14px; width: 100%; display: none; flex-direction: column; gap: 10px;">
+          <audio id="realAudioPlayer" controls style="width: 100%; border-radius: 12px; outline: none;"></audio>
+          <a id="downloadVoiceBtn" class="btn-secondary full-width" style="text-align: center; text-decoration: none; padding: 14px; display: block;" download="zenvyra-voice.mp3">⬇️ Download Audio (MP3)</a>
         </div>
 
-        <div id="voiceStatus" class="result-area" style="font-size: 14px; color: #94a3b8; margin-top: 8px;"></div>
+        <div id="voiceStatus" class="result-area" style="font-size: 14px; color: #94a3b8; margin-top: 6px;"></div>
       </div>
 
       <!-- 4. VIDEO GENERATOR TAB -->
@@ -133,6 +141,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=999"></script>
+  <script src="app.js?v=1100"></script>
 </body>
 </html>
