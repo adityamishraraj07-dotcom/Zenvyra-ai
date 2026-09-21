@@ -4,105 +4,105 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=200" />
+  <link rel="stylesheet" href="style.css?v=300" />
 </head>
 <body>
-  <div class="app">
-    <!-- TOP HERO SECTION -->
-    <header class="hero-section">
-      <h1 class="brand-hero-title">Zenvyra AI</h1>
-      
-      <!-- 5 Lines About What It Can Do -->
-      <div class="hero-description">
-        <p>⚡ All-in-one next generation creative AI workspace.</p>
-        <p>💬 Chat smartly, write content, and get instant answers in Hindi & English.</p>
-        <p>🎨 Generate ultra-realistic, studio-quality images in seconds.</p>
-        <p>🎬 Turn prompts and scripts into cinematic AI video scenes effortlessly.</p>
-        <p>🚀 Powered by advanced intelligence to speed up your creative workflow.</p>
-      </div>
-
-      <!-- Feature Navigation Tabs -->
-      <nav class="nav">
-        <a href="#" class="nav-item active" data-page="chat">
-          <span class="nav-icon">💬</span>
-          <span>AI Chat</span>
-        </a>
-        <a href="#" class="nav-item" data-page="image">
-          <span class="nav-icon">🎨</span>
-          <span>Image Generator</span>
-        </a>
-        <a href="#" class="nav-item" data-page="video">
-          <span class="nav-icon">🎬</span>
-          <span>Video Generator</span>
-        </a>
-      </nav>
+  <div class="app-wrapper">
+    <!-- 1. TOP TITLE -->
+    <header class="app-header">
+      <h1 class="brand-title">Zenvyra AI</h1>
     </header>
 
-    <!-- MAIN CONTENT PAGES -->
-    <main class="main">
-      <!-- 1. AI CHAT PAGE -->
-      <section id="chatPage" class="page active">
-        <div class="chat-welcome">
-          <span class="badge">✦ Zenvyra AI Assistant</span>
+    <!-- 2. ABOUT FEATURE BOX -->
+    <section class="about-card">
+      <p>⚡ Next-gen all-in-one creative AI studio</p>
+      <p>💬 Intelligent conversation & scripting in Hindi & English</p>
+      <p>🎨 High-resolution creative image generation</p>
+      <p>🎬 Instant AI video scene creation from prompts</p>
+      <p>🚀 Powered by modern intelligence for fast creation</p>
+    </section>
+
+    <!-- 3. NAVIGATION SWITCHER -->
+    <nav class="nav-switcher">
+      <button class="nav-btn active" data-page="chat">
+        <span class="icon">💬</span>
+        <span class="label">AI Chat</span>
+      </button>
+      <button class="nav-btn" data-page="image">
+        <span class="icon">🎨</span>
+        <span class="label">Image Generator</span>
+      </button>
+      <button class="nav-btn" data-page="video">
+        <span class="icon">🎬</span>
+        <span class="label">Video Generator</span>
+      </button>
+    </nav>
+
+    <!-- 4. ACTIVE WORKSPACE / INTERACTIVE CARD -->
+    <main class="workspace">
+      <!-- AI CHAT TAB -->
+      <div id="chatPage" class="content-page active">
+        <div class="card-hero">
+          <span class="badge">✦ Zenvyra Assistant</span>
           <h2>How can I help you today?</h2>
-          <p>Your intelligent assistant is ready. Type in English or Hindi, or use the voice button below.</p>
+          <p>Type in English or Hindi, or use the voice button below.</p>
         </div>
 
-        <div id="chatMessages" class="chat-messages"></div>
+        <div id="chatMessages" class="chat-display"></div>
 
-        <div class="chat-input-container">
+        <div class="input-card">
           <textarea id="chatInput" placeholder="Message Zenvyra AI (English / Hindi)..." rows="3"></textarea>
-          <div class="chat-controls">
-            <button id="voiceBtn" class="secondary-btn" type="button">🎙️ Voice</button>
-            <button id="sendChatBtn" class="primary-btn" type="button">Send →</button>
+          <div class="button-row">
+            <button id="voiceBtn" class="btn-secondary" type="button">🎙️ Voice</button>
+            <button id="sendChatBtn" class="btn-primary" type="button">Send →</button>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- 2. IMAGE GENERATOR PAGE -->
-      <section id="imagePage" class="page" style="display: none;">
-        <div class="chat-welcome">
-          <span class="badge">✦ Studio Flux Model</span>
+      <!-- IMAGE GENERATOR TAB -->
+      <div id="imagePage" class="content-page" style="display: none;">
+        <div class="card-hero">
+          <span class="badge">✦ Flux Studio</span>
           <h2>AI Image Generator</h2>
-          <p>Describe your creative imagination in detail to generate high-resolution art.</p>
+          <p>Describe your imagination to create high-detail artwork.</p>
         </div>
 
-        <div class="chat-input-container">
+        <div class="input-card">
           <textarea id="imagePrompt" placeholder="Describe the image you want to generate..." rows="3"></textarea>
-          
-          <div class="ratio-selector" style="margin-top: 10px; display: flex; gap: 8px;">
-            <select id="aspectRatio" style="padding: 10px; border-radius: 10px; background: #111827; color: #fff; border: 1px solid rgba(255,255,255,0.12); flex: 1;">
-              <option value="1:1">Square (1:1)</option>
-              <option value="16:9">Landscape (16:9)</option>
-              <option value="9:16">Portrait / Reel (9:16)</option>
-            </select>
-          </div>
-
-          <button id="generateImageBtn" class="primary-btn" type="button" style="margin-top: 12px;">Generate with AI →</button>
+          <select id="aspectRatio" class="ratio-dropdown">
+            <option value="1:1">Square (1:1)</option>
+            <option value="16:9">Landscape (16:9)</option>
+            <option value="9:16">Portrait / Reel (9:16)</option>
+          </select>
+          <button id="generateImageBtn" class="btn-primary full-width" type="button">Generate with AI →</button>
         </div>
 
-        <div id="imageResult" style="margin-top: 20px; text-align: center; width: 100%;"></div>
-      </section>
+        <div id="imageResult" class="result-area"></div>
+      </div>
 
-      <!-- 3. VIDEO GENERATOR PAGE -->
-      <section id="videoPage" class="page" style="display: none;">
-        <div class="chat-welcome">
-          <span class="badge">✦ AI Cinematic Studio</span>
+      <!-- VIDEO GENERATOR TAB -->
+      <div id="videoPage" class="content-page" style="display: none;">
+        <div class="card-hero">
+          <span class="badge">✦ Cinematic AI</span>
           <h2>AI Video Generator</h2>
-          <p>Transform scripts and concepts into realistic video scenes effortlessly.</p>
+          <p>Transform your script into cinematic scenes effortlessly.</p>
         </div>
 
-        <div class="chat-input-container">
-          <textarea id="videoPrompt" placeholder="Describe your video scene or paste a script..." rows="3"></textarea>
-          <button id="generateVideoBtn" class="primary-btn" type="button" style="margin-top: 12px;">Generate Video →</button>
+        <div class="input-card">
+          <textarea id="videoPrompt" placeholder="Describe your video prompt or scene idea..." rows="3"></textarea>
+          <button id="generateVideoBtn" class="btn-primary full-width" type="button">Generate Video →</button>
         </div>
 
-        <div id="videoResult" style="margin-top: 20px; text-align: center; width: 100%;"></div>
-      </section>
+        <div id="videoResult" class="result-area"></div>
+      </div>
     </main>
+
+    <!-- 5. BOTTOM BRAND FOOTER (NO EMPTY HOLE) -->
+    <footer class="app-footer">
+      <span>Zenvyra Creative Workspace</span>
+    </footer>
   </div>
 
-  <!-- Scripts -->
-  <script src="app.js?v=150"></script>
+  <script src="app.js?v=300"></script>
 </body>
 </html>
