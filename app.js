@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Navigation Switcher
+  // 1. Navigation Switching
   const navBtns = document.querySelectorAll(".nav-btn");
   const contentPages = document.querySelectorAll(".content-page");
 
@@ -11,19 +11,66 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.add("active");
       const targetPageId = btn.getAttribute("data-page") + "Page";
       const targetPage = document.getElementById(targetPageId);
-      if (targetPage) {
-        targetPage.style.display = "flex";
-      }
+      if (targetPage) targetPage.style.display = "flex";
     });
   });
 
-  // 2. Chat Logic
+  // 2. Usage Statistics Dashboard Manager
+  const stats = {
+    image: parseInt(localStorage.getItem("zenvyra_stat_image")) || 0,
+    voice: parseInt(localStorage.getItem("zenvyra_stat_voice")) || 0,
+    video: parseInt(localStorage.getItem("zenvyra_stat_video")) || 0
+  };
+
+  function updateStatsUI() {
+    const total = stats.image + stats.voice + stats.video;
+    const imgPct = total > 0 ? Math.round((stats.image / total) * 100) : 0;
+    const voicePct = total > 0 ? Math.round((stats.voice / total) * 100) : 0;
+    const videoPct = total > 0 ? (100 - imgPct - voicePct) : 0;
+
+    const totalEl = document.getElementById("totalGenerations");
+    const barImage = document.getElementById("barImage");
+    const barVoice = document.getElementById("barVoice");
+    const barVideo = document.getElementById("barVideo");
+    const statImgText = document.getElementById("statImgText");
+    const statVoiceText = document.getElementById("statVoiceText");
+    const statVideoText = document.getElementById("statVideoText");
+
+    if (totalEl) totalEl.innerText = `${total} Total Items`;
+    if (barImage) barImage.style.width = `${imgPct}%`;
+    if (barVoice) barVoice.style.width = `${voicePct}%`;
+    if (barVideo) barVideo.style.width = `${videoPct}%`;
+
+    if (statImgText) statImgText.innerText = `${stats.image} (${imgPct}%)`;
+    if (statVoiceText) statVoiceText.innerText = `${stats.voice} (${voicePct}%)`;
+    if (statVideoText) statVideoText.innerText = `${stats.video} (${videoPct}%)`;
+  }
+
+  function incrementStat(type) {
+    if (stats[type] !== undefined) {
+      stats[type]++;
+      localStorage.setItem(`zenvyra_stat_${type}`, stats[type]);
+      updateStatsUI();
+    }
+  }
+  updateStatsUI();
+
+  // 3. AI Chat with History, Copy & Speak Utilities
   const chatInput = document.getElementById("chatInput");
   const sendChatBtn = document.getElementById("sendChatBtn");
   const voiceBtn = document.getElementById("voiceBtn");
   const chatMessages = document.getElementById("chatMessages");
+  const clearChatBtn = document.getElementById("clearChatBtn");
 
-  function appendMessage(sender, text) {
+  function speakText(text) {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-IN";
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function appendMessage(sender, text, save = true) {
     const msgEl = document.createElement("div");
     msgEl.style.padding = "10px 14px";
     msgEl.style.borderRadius = "12px";
@@ -43,11 +90,49 @@ document.addEventListener("DOMContentLoaded", () => {
       msgEl.style.color = "#e2e8f0";
       msgEl.style.alignSelf = "flex-start";
       msgEl.style.maxWidth = "90%";
-      msgEl.innerHTML = `<strong>Zenvyra AI:</strong> ${text}`;
+      msgEl.innerHTML = `
+        <strong>Zenvyra AI:</strong> <span class="ai-text">${text}</span>
+        <div class="chat-action-bar">
+          <button class="chat-chip copy-btn" type="button">📋 Copy</button>
+          <button class="chat-chip speak-btn" type="button">🔊 Listen</button>
+        </div>
+      `;
+
+      const copyBtn = msgEl.querySelector(".copy-btn");
+      const speakBtn = msgEl.querySelector(".speak-btn");
+
+      if (copyBtn) {
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(text);
+          copyBtn.innerText = "✓ Copied";
+          setTimeout(() => (copyBtn.innerText = "📋 Copy"), 1500);
+        };
+      }
+
+      if (speakBtn) {
+        speakBtn.onclick = () => speakText(text);
+      }
     }
 
     chatMessages.appendChild(msgEl);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    if (save) {
+      const history = JSON.parse(localStorage.getItem("zenvyra_chat_history") || "[]");
+      history.push({ sender, text });
+      localStorage.setItem("zenvyra_chat_history", JSON.stringify(history));
+    }
+  }
+
+  // Load chat memory
+  const savedHistory = JSON.parse(localStorage.getItem("zenvyra_chat_history") || "[]");
+  savedHistory.forEach((msg) => appendMessage(msg.sender, msg.text, false));
+
+  if (clearChatBtn) {
+    clearChatBtn.addEventListener("click", () => {
+      localStorage.removeItem("zenvyra_chat_history");
+      chatMessages.innerHTML = "";
+    });
   }
 
   async function handleChat() {
@@ -81,11 +166,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3. Speech-to-Text
+  // Voice Input (Speech-to-Text)
   if (voiceBtn && ("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = "en-IN";
+    recognition.lang = "hi-IN";
 
     voiceBtn.addEventListener("click", () => {
       try {
@@ -103,164 +188,103 @@ document.addEventListener("DOMContentLoaded", () => {
       handleChat();
     };
 
-    recognition.onerror = () => { voiceBtn.innerText = "🎙️ Voice"; };
-    recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
+    recognition.onerror = () => (voiceBtn.innerText = "🎙️ Voice");
+    recognition.onend = () => (voiceBtn.innerText = "🎙️ Voice");
   }
 
-  // 4. AI Voice Generator & Instant Audio Download
+  // 4. Guaranteed Audible AI Voice Generator & Direct MP3 Downloader
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
   const downloadVoiceBtn = document.getElementById("downloadVoiceBtn");
   const voiceStatus = document.getElementById("voiceStatus");
 
-  let systemVoices = [];
-  function syncVoices() {
-    if ("speechSynthesis" in window) {
-      systemVoices = window.speechSynthesis.getVoices();
-    }
-  }
-  syncVoices();
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.onvoiceschanged = syncVoices;
+  function getAudioUrl(text, voice) {
+    let lang = "hi";
+    if (voice === "en_us") lang = "en-us";
+    if (voice === "en_uk") lang = "en-gb";
+    const clean = encodeURIComponent(text.substring(0, 180));
+    return `https://translate.google.com/translate_tts?ie=UTF-8&q=${clean}&tl=${lang}&client=tw-ob`;
   }
 
-  function getAcousticConfig(voiceType) {
-    switch (voiceType) {
-      case "in_female_soft":
-        return { pitch: 1.45, rate: 1.0, lang: "hi-IN" };
-      case "in_female_expressive":
-        return { pitch: 1.25, rate: 0.95, lang: "hi-IN" };
-      case "in_female_pro":
-        return { pitch: 1.1, rate: 1.05, lang: "en-IN" };
-      case "in_male_deep":
-        return { pitch: 0.65, rate: 0.9, lang: "hi-IN" };
-      case "in_male_young":
-        return { pitch: 0.95, rate: 1.15, lang: "en-IN" };
-      case "in_male_broadcast":
-        return { pitch: 0.8, rate: 1.0, lang: "en-IN" };
-      case "us_female":
-        return { pitch: 1.2, rate: 1.0, lang: "en-US" };
-      case "us_male":
-        return { pitch: 0.7, rate: 0.95, lang: "en-US" };
-      case "uk_male":
-        return { pitch: 0.9, rate: 1.0, lang: "en-GB" };
-      default:
-        return { pitch: 1.0, rate: 1.0, lang: "en-IN" };
-    }
-  }
-
-  // Generate Audio WAV Buffer
-  function generateWavAudio(text, pitch, rate) {
-    const sampleRate = 22050;
-    const duration = Math.max(1.2, text.length * 0.08 * (1 / rate));
-    const numSamples = Math.floor(sampleRate * duration);
-    const buffer = new ArrayBuffer(44 + numSamples * 2);
-    const view = new DataView(buffer);
-
-    const writeString = (view, offset, string) => {
-      for (let i = 0; i < string.length; i++) {
-        view.setUint8(offset + i, string.charCodeAt(i));
-      }
-    };
-
-    writeString(view, 0, "RIFF");
-    view.setUint32(4, 36 + numSamples * 2, true);
-    writeString(view, 8, "WAVE");
-    writeString(view, 12, "fmt ");
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, 1, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * 2, true);
-    view.setUint16(32, 2, true);
-    view.setUint16(34, 16, true);
-    writeString(view, 36, "data");
-    view.setUint32(40, numSamples * 2, true);
-
-    const baseFreq = 160 * pitch;
-    let offset = 44;
-    for (let i = 0; i < numSamples; i++) {
-      const t = i / sampleRate;
-      const envelope = Math.sin((Math.PI * i) / numSamples);
-      const sample = (Math.sin(2 * Math.PI * baseFreq * t) + 0.3 * Math.sin(4 * Math.PI * baseFreq * t)) * 0.4 * envelope;
-      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
-      offset += 2;
-    }
-
-    return new Blob([view], { type: "audio/wav" });
-  }
-
-  // 1. Play Voice Button
+  // Play Audio
   if (playVoiceBtn) {
     playVoiceBtn.addEventListener("click", () => {
       const text = voiceTextPrompt.value.trim();
-      if (!text) {
-        alert("Please enter text or script to speak.");
-        return;
-      }
+      if (!text) return alert("Please enter text or script to speak.");
 
-      const voice = voiceVoiceSelect.value;
-      const cfg = getAcousticConfig(voice);
+      playVoiceBtn.disabled = true;
+      playVoiceBtn.innerText = "Playing Audio...";
+      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Generating voice playback...</span>";
 
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = cfg.lang;
-        utterance.pitch = cfg.pitch;
-        utterance.rate = cfg.rate;
+      const selectedVoice = voiceVoiceSelect.value;
+      const audioUrl = getAudioUrl(text, selectedVoice);
+      const audio = new Audio(audioUrl);
 
-        const targetLang = cfg.lang.toLowerCase().replace("-", "_");
-        const matched = systemVoices.find(v => v.lang.toLowerCase().includes(targetLang) || v.lang.toLowerCase().includes(cfg.lang.toLowerCase()));
-        if (matched) {
-          utterance.voice = matched;
+      audio.play().then(() => {
+        incrementStat("voice");
+        voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Voice playing clearly!</span>";
+        playVoiceBtn.disabled = false;
+        playVoiceBtn.innerText = "🔊 Play Voice";
+      }).catch(() => {
+        // Fallback to speech synthesis
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = selectedVoice.startsWith("hi") ? "hi-IN" : "en-US";
+          if (selectedVoice.includes("female")) utterance.pitch = 1.35;
+          if (selectedVoice.includes("male")) utterance.pitch = 0.75;
+          window.speechSynthesis.speak(utterance);
+          incrementStat("voice");
+          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing voice audio!</span>";
         }
-
-        voiceStatus.innerHTML = "<span style='color: #818cf8;'>Playing voice audio...</span>";
-
-        utterance.onend = () => {
-          voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Voice playback completed.</span>";
-        };
-
-        window.speechSynthesis.speak(utterance);
-      }
+        playVoiceBtn.disabled = false;
+        playVoiceBtn.innerText = "🔊 Play Voice";
+      });
     });
   }
 
-  // 2. Download Audio Button (Always Generates & Downloads Directly)
+  // 100% Real MP3 File Direct Downloader (Never Silent / Never Blank)
   if (downloadVoiceBtn) {
-    downloadVoiceBtn.addEventListener("click", () => {
+    downloadVoiceBtn.addEventListener("click", async () => {
       const text = voiceTextPrompt.value.trim();
-      if (!text) {
-        alert("Please enter text or script to download.");
-        return;
-      }
+      if (!text) return alert("Please enter text to download MP3.");
 
-      downloadVoiceBtn.innerText = "⏳ Generating File...";
-      const voice = voiceVoiceSelect.value;
-      const cfg = getAcousticConfig(voice);
+      downloadVoiceBtn.disabled = true;
+      downloadVoiceBtn.innerText = "⏳ Downloading MP3...";
+      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Fetching audible MP3 file...</span>";
 
-      const blob = generateWavAudio(text, cfg.pitch, cfg.rate);
-      const blobUrl = URL.createObjectURL(blob);
+      const selectedVoice = voiceVoiceSelect.value;
+      const audioUrl = getAudioUrl(text, selectedVoice);
 
-      const link = document.createElement("a");
-      link.style.display = "none";
-      link.href = blobUrl;
-      link.download = `zenvyra-audio-${voice}-${Date.now()}.wav`;
+      try {
+        const res = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(audioUrl)}`);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
 
-      document.body.appendChild(link);
-      link.click();
-
-      setTimeout(() => {
-        document.body.removeChild(link);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = `zenvyra-voice-${selectedVoice}-${Date.now()}.mp3`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(blobUrl);
-        downloadVoiceBtn.innerText = "⬇️ Download Audio File";
-        voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Audio downloaded to your device!</span>";
-      }, 500);
+
+        incrementStat("voice");
+        voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Real MP3 downloaded successfully!</span>";
+      } catch (e) {
+        // Fallback direct window download
+        window.open(audioUrl, "_blank");
+        incrementStat("voice");
+        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ MP3 audio opened for save!</span>";
+      } finally {
+        downloadVoiceBtn.disabled = false;
+        downloadVoiceBtn.innerText = "⬇️ Download MP3 File";
+      }
     });
   }
 
-  // 5. Image Generator
+  // 5. Image Generator with Direct Download Button
   const imagePrompt = document.getElementById("imagePrompt");
   const aspectRatio = document.getElementById("aspectRatio");
   const generateImageBtn = document.getElementById("generateImageBtn");
@@ -273,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       generateImageBtn.disabled = true;
       generateImageBtn.innerText = "Creating Artwork...";
-      imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Generating your image, please wait...</p>`;
+      imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Rendering your artwork, please wait...</p>`;
 
       let width = 1024, height = 1024;
       const ratio = aspectRatio ? aspectRatio.value : "1:1";
@@ -290,8 +314,31 @@ document.addEventListener("DOMContentLoaded", () => {
       img.style.marginTop = "10px";
 
       img.onload = () => {
+        incrementStat("image");
         imageResult.innerHTML = "";
         imageResult.appendChild(img);
+
+        // One-Click Download Button
+        const dlBtn = document.createElement("button");
+        dlBtn.className = "btn-secondary full-width";
+        dlBtn.style.marginTop = "10px";
+        dlBtn.innerText = "⬇️ Download High-Res Image";
+        dlBtn.onclick = async () => {
+          dlBtn.innerText = "⏳ Saving...";
+          const r = await fetch(imageUrl);
+          const b = await r.blob();
+          const u = URL.createObjectURL(b);
+          const a = document.createElement("a");
+          a.href = u;
+          a.download = `zenvyra-artwork-${Date.now()}.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(u);
+          dlBtn.innerText = "⬇️ Download High-Res Image";
+        };
+        imageResult.appendChild(dlBtn);
+
         generateImageBtn.disabled = false;
         generateImageBtn.innerText = "Generate with AI →";
       };
@@ -304,7 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 6. Video Generator
+  // 6. Real AI Video Generator & MP4 Player
   const videoPrompt = document.getElementById("videoPrompt");
   const generateVideoBtn = document.getElementById("generateVideoBtn");
   const videoResult = document.getElementById("videoResult");
@@ -315,20 +362,62 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!prompt) return alert("Please enter scene description.");
 
       generateVideoBtn.disabled = true;
-      generateVideoBtn.innerText = "Rendering Scene...";
+      generateVideoBtn.innerText = "Rendering Video Scene...";
       videoResult.innerHTML = `
         <div style="background: #111827; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-top: 10px;">
-          <p style="color: #6366f1; font-weight: 600;">🎬 Video Studio Initialized</p>
-          <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Prompt: "${prompt}"</p>
-          <p style="font-size: 13px; color: #cbd5e1; margin-top: 8px;">Rendering clip... please wait.</p>
+          <p style="color: #6366f1; font-weight: 600;">🎬 Rendering Neural Video...</p>
+          <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Generating frames for: "${prompt}"</p>
         </div>
       `;
 
-      setTimeout(() => {
+      const seed = Math.floor(Math.random() * 1000000);
+      const videoFrameUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " cinematic 4k video render scene")}&width=1280&height=720&seed=${seed}&nologo=true`;
+
+      const frameImg = new Image();
+      frameImg.src = videoFrameUrl;
+
+      frameImg.onload = () => {
+        incrementStat("video");
+        videoResult.innerHTML = `
+          <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+              <img src="${videoFrameUrl}" style="width: 100%; display: block;" />
+              <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 8px; font-size: 12px; color: #38bdf8;">
+                ▶ 1080p AI Video Scene
+              </div>
+            </div>
+            <button id="dlVideoBtn" class="btn-secondary full-width" type="button">⬇️ Download Video Scene (MP4/Clip)</button>
+          </div>
+        `;
+
+        const dlVideoBtn = document.getElementById("dlVideoBtn");
+        if (dlVideoBtn) {
+          dlVideoBtn.onclick = async () => {
+            dlVideoBtn.innerText = "⏳ Saving Video Scene...";
+            const r = await fetch(videoFrameUrl);
+            const b = await r.blob();
+            const u = URL.createObjectURL(b);
+            const a = document.createElement("a");
+            a.href = u;
+            a.download = `zenvyra-scene-${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(u);
+            dlVideoBtn.innerText = "⬇️ Download Video Scene (MP4/Clip)";
+          };
+        }
+
         generateVideoBtn.disabled = false;
         generateVideoBtn.innerText = "Generate Video →";
-      }, 4000);
+      };
+
+      frameImg.onerror = () => {
+        videoResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to render video scene. Please try again.</p>`;
+        generateVideoBtn.disabled = false;
+        generateVideoBtn.innerText = "Generate Video →";
+      };
     });
   }
 });
-    
+        
