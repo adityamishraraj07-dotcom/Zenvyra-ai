@@ -1,21 +1,14 @@
-// ================= ZENVYRA AI COMPLETE APPLICATION LOGIC =================
-
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. NAVIGATION TAB SWITCHER
+  // 1. Navigation Switcher
   const navBtns = document.querySelectorAll(".nav-btn");
   const contentPages = document.querySelectorAll(".content-page");
 
   navBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      // Remove active class from all buttons
       navBtns.forEach((b) => b.classList.remove("active"));
-      // Hide all pages
       contentPages.forEach((page) => (page.style.display = "none"));
 
-      // Set active button
       btn.classList.add("active");
-
-      // Show selected page
       const targetPageId = btn.getAttribute("data-page") + "Page";
       const targetPage = document.getElementById(targetPageId);
       if (targetPage) {
@@ -24,11 +17,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 2. AI CHAT SYSTEM
+  // 2. Chat Logic with Speak Feature
   const chatInput = document.getElementById("chatInput");
   const sendChatBtn = document.getElementById("sendChatBtn");
   const voiceBtn = document.getElementById("voiceBtn");
   const chatMessages = document.getElementById("chatMessages");
+
+  function speakText(text) {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  }
 
   function appendMessage(sender, text) {
     const msgEl = document.createElement("div");
@@ -37,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     msgEl.style.fontSize = "14px";
     msgEl.style.lineHeight = "1.4";
     msgEl.style.wordBreak = "break-word";
+    msgEl.style.position = "relative";
 
     if (sender === "user") {
       msgEl.style.background = "#1e293b";
@@ -50,7 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
       msgEl.style.color = "#e2e8f0";
       msgEl.style.alignSelf = "flex-start";
       msgEl.style.maxWidth = "90%";
-      msgEl.innerHTML = `<strong>Zenvyra AI:</strong> ${text}`;
+      msgEl.innerHTML = `<strong>Zenvyra AI:</strong> ${text} <br/><button class="listen-btn" style="margin-top: 6px; padding: 3px 8px; font-size: 11px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; color: #fff; cursor: pointer;">🔊 Listen</button>`;
+      
+      const listenBtn = msgEl.querySelector(".listen-btn");
+      if (listenBtn) {
+        listenBtn.onclick = () => speakText(text);
+      }
     }
 
     chatMessages.appendChild(msgEl);
@@ -67,22 +75,18 @@ document.addEventListener("DOMContentLoaded", () => {
     sendChatBtn.innerText = "Thinking...";
 
     try {
-      // Free open AI inference endpoint
       const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(query)}?model=openai`);
       const data = await response.text();
       appendMessage("ai", data || "Zenvyra AI response could not be generated.");
     } catch (err) {
-      appendMessage("ai", "Sorry, an error occurred while connecting to Zenvyra AI server.");
+      appendMessage("ai", "Sorry, an error occurred while connecting to server.");
     } finally {
       sendChatBtn.disabled = false;
       sendChatBtn.innerText = "Send →";
     }
   }
 
-  if (sendChatBtn) {
-    sendChatBtn.addEventListener("click", handleChat);
-  }
-
+  if (sendChatBtn) sendChatBtn.addEventListener("click", handleChat);
   if (chatInput) {
     chatInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -92,13 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3. VOICE RECOGNITION (HINDI / ENGLISH)
+  // 3. Voice Input (Speech-to-Text)
   if (voiceBtn && ("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = "hi-IN"; // Supports Hindi & English
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.lang = "hi-IN";
 
     voiceBtn.addEventListener("click", () => {
       try {
@@ -111,22 +113,75 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      chatInput.value = transcript;
+      chatInput.value = event.results[0][0].transcript;
       voiceBtn.innerText = "🎙️ Voice";
       handleChat();
     };
 
-    recognition.onerror = () => {
-      voiceBtn.innerText = "🎙️ Voice";
-    };
-
-    recognition.onend = () => {
-      voiceBtn.innerText = "🎙️ Voice";
-    };
+    recognition.onerror = () => { voiceBtn.innerText = "🎙️ Voice"; };
+    recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
   }
 
-  // 4. IMAGE GENERATOR (POLLINATIONS FLUX STUDIO)
+  // 4. AI Voice Generator (Text-to-Speech Studio)
+  const voiceTextPrompt = document.getElementById("voiceTextPrompt");
+  const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
+  const playVoiceBtn = document.getElementById("playVoiceBtn");
+  const stopVoiceBtn = document.getElementById("stopVoiceBtn");
+  const voiceStatus = document.getElementById("voiceStatus");
+
+  if (playVoiceBtn) {
+    playVoiceBtn.addEventListener("click", () => {
+      const text = voiceTextPrompt.value.trim();
+      if (!text) {
+        alert("Please enter text for AI to speak!");
+        return;
+      }
+
+      if (!("speechSynthesis" in window)) {
+        voiceStatus.innerText = "Speech synthesis not supported on this browser.";
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      const selectedVoiceType = voiceVoiceSelect.value;
+
+      // Select matching voice
+      const voices = window.speechSynthesis.getVoices();
+      if (selectedVoiceType === "hindi") {
+        utterance.lang = "hi-IN";
+      } else if (selectedVoiceType === "english_female") {
+        utterance.lang = "en-US";
+        utterance.pitch = 1.2;
+      } else {
+        utterance.lang = "en-US";
+        utterance.pitch = 0.9;
+      }
+
+      utterance.onstart = () => {
+        voiceStatus.innerHTML = "🔊 <span style='color: #6366f1;'>Speaking now...</span>";
+      };
+
+      utterance.onend = () => {
+        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Finished playback.</span>";
+      };
+
+      utterance.onerror = () => {
+        voiceStatus.innerHTML = "<span style='color: #ef4444;'>Playback error.</span>";
+      };
+
+      window.speechSynthesis.speak(utterance);
+    });
+  }
+
+  if (stopVoiceBtn) {
+    stopVoiceBtn.addEventListener("click", () => {
+      window.speechSynthesis.cancel();
+      voiceStatus.innerText = "Playback stopped.";
+    });
+  }
+
+  // 5. Image Generator
   const imagePrompt = document.getElementById("imagePrompt");
   const aspectRatio = document.getElementById("aspectRatio");
   const generateImageBtn = document.getElementById("generateImageBtn");
@@ -135,26 +190,16 @@ document.addEventListener("DOMContentLoaded", () => {
   if (generateImageBtn) {
     generateImageBtn.addEventListener("click", async () => {
       const prompt = imagePrompt.value.trim();
-      if (!prompt) {
-        alert("Please describe the image first!");
-        return;
-      }
+      if (!prompt) return alert("Please enter an image description!");
 
       generateImageBtn.disabled = true;
       generateImageBtn.innerText = "Creating Artwork...";
-      imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Generating your high-resolution image, please wait...</p>`;
+      imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Generating your image, please wait...</p>`;
 
-      let width = 1024;
-      let height = 1024;
+      let width = 1024, height = 1024;
       const ratio = aspectRatio ? aspectRatio.value : "1:1";
-
-      if (ratio === "16:9") {
-        width = 1280;
-        height = 720;
-      } else if (ratio === "9:16") {
-        width = 720;
-        height = 1280;
-      }
+      if (ratio === "16:9") { width = 1280; height = 720; }
+      else if (ratio === "9:16") { width = 720; height = 1280; }
 
       const seed = Math.floor(Math.random() * 1000000);
       const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${seed}&nologo=true&model=flux`;
@@ -163,48 +208,24 @@ document.addEventListener("DOMContentLoaded", () => {
       img.src = imageUrl;
       img.style.maxWidth = "100%";
       img.style.borderRadius = "16px";
-      img.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
       img.style.marginTop = "10px";
 
       img.onload = () => {
         imageResult.innerHTML = "";
         imageResult.appendChild(img);
-
-        // Download Action Button
-        const downloadBtn = document.createElement("button");
-        downloadBtn.innerText = "⬇️ Download Image";
-        downloadBtn.className = "btn-secondary full-width";
-        downloadBtn.style.marginTop = "10px";
-        downloadBtn.onclick = async () => {
-          try {
-            const resp = await fetch(imageUrl);
-            const blob = await resp.blob();
-            const blobUrl = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = blobUrl;
-            link.download = `zenvyra-ai-${seed}.jpg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          } catch (e) {
-            window.open(imageUrl, "_blank");
-          }
-        };
-
-        imageResult.appendChild(downloadBtn);
         generateImageBtn.disabled = false;
         generateImageBtn.innerText = "Generate with AI →";
       };
 
       img.onerror = () => {
-        imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate image. Please try another prompt.</p>`;
+        imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate image. Try again.</p>`;
         generateImageBtn.disabled = false;
         generateImageBtn.innerText = "Generate with AI →";
       };
     });
   }
 
-  // 5. VIDEO GENERATOR SYSTEM
+  // 6. Video Generator
   const videoPrompt = document.getElementById("videoPrompt");
   const generateVideoBtn = document.getElementById("generateVideoBtn");
   const videoResult = document.getElementById("videoResult");
@@ -212,18 +233,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (generateVideoBtn) {
     generateVideoBtn.addEventListener("click", () => {
       const prompt = videoPrompt.value.trim();
-      if (!prompt) {
-        alert("Please enter a scene description or script!");
-        return;
-      }
+      if (!prompt) return alert("Please enter scene description!");
 
       generateVideoBtn.disabled = true;
       generateVideoBtn.innerText = "Rendering Scene...";
       videoResult.innerHTML = `
-        <div style="background: #111827; padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
-          <p style="color: #6366f1; font-weight: 600;">🎬 Video Studio Pipeline Initialized</p>
+        <div style="background: #111827; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-top: 10px;">
+          <p style="color: #6366f1; font-weight: 600;">🎬 Video Studio Initialized</p>
           <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Prompt: "${prompt}"</p>
-          <p style="font-size: 13px; color: #cbd5e1; margin-top: 10px;">Rendering high-motion clip... please wait.</p>
+          <p style="font-size: 13px; color: #cbd5e1; margin-top: 8px;">Rendering clip... please wait.</p>
         </div>
       `;
 
@@ -234,4 +252,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-              
+        
