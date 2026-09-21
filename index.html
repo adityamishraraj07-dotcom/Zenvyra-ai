@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=900" />
+  <link rel="stylesheet" href="style.css?v=950" />
 </head>
 <body>
   <div class="app-wrapper">
@@ -18,11 +18,11 @@
       <p>⚡ Next-gen all-in-one creative AI studio</p>
       <p>💬 Intelligent conversation & scripting in Hindi & English</p>
       <p>🎨 High-resolution creative image generation</p>
-      <p>🎙️ Natural sounding AI Voice generation & playback</p>
+      <p>🎙️ Natural sounding multi-style AI Voices (Hindi & English)</p>
       <p>🎬 Instant AI video scene creation from prompts</p>
     </section>
 
-    <!-- 4 Navigation Tabs (Added Voice Tab) -->
+    <!-- Navigation Tabs -->
     <nav class="nav-switcher">
       <button class="nav-btn active" data-page="chat">
         <span class="icon">💬</span>
@@ -84,27 +84,44 @@
         <div id="imageResult" class="result-area"></div>
       </div>
 
-      <!-- 3. AI VOICE GENERATOR TAB -->
+      <!-- 3. AI VOICE STUDIO (MULTI-VOICE HINDI & ENGLISH) -->
       <div id="voicePage" class="content-page" style="display: none;">
         <div class="card-hero">
           <span class="badge">✦ Neural Voice Studio</span>
           <h2>AI Voice Generator</h2>
-          <p>Enter text or scripts to generate clear natural speech.</p>
+          <p>Choose from realistic Hindi & English personas.</p>
         </div>
 
         <div class="input-card">
-          <textarea id="voiceTextPrompt" placeholder="Enter text or script you want AI to speak..." rows="3"></textarea>
+          <textarea id="voiceTextPrompt" placeholder="Enter Hindi or English script to speak..." rows="3"></textarea>
           
-          <div class="button-row">
-            <select id="voiceVoiceSelect" class="ratio-dropdown" style="margin-bottom: 0;">
-              <option value="hindi">Hindi Accent (Indian)</option>
-              <option value="english_female">English (Female)</option>
-              <option value="english_male">English (Male)</option>
+          <!-- Persona Selector -->
+          <select id="voiceVoiceSelect" class="ratio-dropdown">
+            <optgroup label="🇮🇳 Hindi Voices">
+              <option value="hi_female_soft">Hindi Female (Sweet & Soft)</option>
+              <option value="hi_male_deep">Hindi Male (Deep & Confident)</option>
+              <option value="hi_male_young">Hindi Male (Young & Casual)</option>
+              <option value="hi_storyteller">Hindi Storyteller (Dramatic)</option>
+            </optgroup>
+            <optgroup label="🇺🇸 & 🇬🇧 English Voices">
+              <option value="en_female_warm">English Female (Warm & Natural)</option>
+              <option value="en_male_cinematic">English Male (Cinematic Narration)</option>
+              <option value="en_energetic">English Energetic (Creator / Reel)</option>
+              <option value="en_uk_premium">English British (Classy Accent)</option>
+            </optgroup>
+          </select>
+
+          <!-- Voice Speed Control -->
+          <div class="button-row" style="margin-top: -4px;">
+            <select id="voiceSpeed" class="ratio-dropdown" style="flex: 1;">
+              <option value="0.85">Speed: Slow (0.85x)</option>
+              <option value="1.0" selected>Speed: Normal (1.0x)</option>
+              <option value="1.2">Speed: Fast (1.2x)</option>
             </select>
           </div>
 
           <div class="button-row">
-            <button id="playVoiceBtn" class="btn-primary" type="button">🔊 Speak / Generate</button>
+            <button id="playVoiceBtn" class="btn-primary" type="button">🔊 Generate Voice</button>
             <button id="stopVoiceBtn" class="btn-secondary" type="button">⏹️ Stop</button>
           </div>
         </div>
@@ -130,6 +147,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=900"></script>
+  <script src="app.js?v=950"></script>
 </body>
 </html>
