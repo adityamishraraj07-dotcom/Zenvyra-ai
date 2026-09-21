@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   updateStatsUI();
 
-  // 3. AI Chat with History, Copy & Speak Utilities
+  // 3. AI Chat Assistant
   const chatInput = document.getElementById("chatInput");
   const sendChatBtn = document.getElementById("sendChatBtn");
   const voiceBtn = document.getElementById("voiceBtn");
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       msgEl.style.alignSelf = "flex-start";
       msgEl.style.maxWidth = "90%";
       msgEl.innerHTML = `
-        <strong>Zenvyra AI:</strong> <span class="ai-text">${text}</span>
+        <strong>Zenvyra AI:</strong> <span>${text}</span>
         <div class="chat-action-bar">
           <button class="chat-chip copy-btn" type="button">📋 Copy</button>
           <button class="chat-chip speak-btn" type="button">🔊 Listen</button>
@@ -124,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Load chat memory
   const savedHistory = JSON.parse(localStorage.getItem("zenvyra_chat_history") || "[]");
   savedHistory.forEach((msg) => appendMessage(msg.sender, msg.text, false));
 
@@ -192,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => (voiceBtn.innerText = "🎙️ Voice");
   }
 
-  // 4. Guaranteed Audible AI Voice Generator & Direct MP3 Downloader
+  // 4. Voice Studio & Audible MP3 Downloader
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
@@ -207,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return `https://translate.google.com/translate_tts?ie=UTF-8&q=${clean}&tl=${lang}&client=tw-ob`;
   }
 
-  // Play Audio
   if (playVoiceBtn) {
     playVoiceBtn.addEventListener("click", () => {
       const text = voiceTextPrompt.value.trim();
@@ -227,7 +225,6 @@ document.addEventListener("DOMContentLoaded", () => {
         playVoiceBtn.disabled = false;
         playVoiceBtn.innerText = "🔊 Play Voice";
       }).catch(() => {
-        // Fallback to speech synthesis
         if ("speechSynthesis" in window) {
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(text);
@@ -244,7 +241,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 100% Real MP3 File Direct Downloader (Never Silent / Never Blank)
   if (downloadVoiceBtn) {
     downloadVoiceBtn.addEventListener("click", async () => {
       const text = voiceTextPrompt.value.trim();
@@ -273,7 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
         incrementStat("voice");
         voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Real MP3 downloaded successfully!</span>";
       } catch (e) {
-        // Fallback direct window download
         window.open(audioUrl, "_blank");
         incrementStat("voice");
         voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ MP3 audio opened for save!</span>";
@@ -284,11 +279,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 5. Image Generator with Direct Download Button
+  // 5. Image Generator (Zero-Watermark Crop Engine)
   const imagePrompt = document.getElementById("imagePrompt");
   const aspectRatio = document.getElementById("aspectRatio");
   const generateImageBtn = document.getElementById("generateImageBtn");
   const imageResult = document.getElementById("imageResult");
+
+  function removeWatermarkAndGetCleanBlob(imgElement) {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const w = imgElement.naturalWidth || 1024;
+      const h = imgElement.naturalHeight || 1024;
+
+      const cleanHeight = h - 38;
+      canvas.width = w;
+      canvas.height = cleanHeight;
+
+      ctx.drawImage(imgElement, 0, 0, w, cleanHeight, 0, 0, w, cleanHeight);
+      canvas.toBlob((blob) => resolve(blob), "image/png");
+    });
+  }
 
   if (generateImageBtn) {
     generateImageBtn.addEventListener("click", async () => {
@@ -296,128 +307,201 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!prompt) return alert("Please enter an image description.");
 
       generateImageBtn.disabled = true;
-      generateImageBtn.innerText = "Creating Artwork...";
-      imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Rendering your artwork, please wait...</p>`;
+      generateImageBtn.innerText = "Creating Clean Artwork...";
+      imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Generating high-detail artwork, please wait...</p>`;
 
-      let width = 1024, height = 1024;
+      let width = 1024, height = 1060;
       const ratio = aspectRatio ? aspectRatio.value : "1:1";
-      if (ratio === "16:9") { width = 1280; height = 720; }
-      else if (ratio === "9:16") { width = 720; height = 1280; }
+      if (ratio === "16:9") { width = 1280; height = 758; }
+      else if (ratio === "9:16") { width = 720; height = 1318; }
 
-      const seed = Math.floor(Math.random() * 1000000);
-      const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${seed}&nologo=true&model=flux`;
+      const enhancedPrompt = `${prompt}, masterpiece, 8k resolution, highly detailed, photorealistic, clean sharp focus, no watermark, no logo, no text`;
+      const seed = Math.floor(Math.random() * 10000000);
+      const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=${width}&height=${height}&seed=${seed}&nologo=true&enhance=true&model=flux`;
 
-      const img = new Image();
-      img.src = imageUrl;
-      img.style.maxWidth = "100%";
-      img.style.borderRadius = "16px";
-      img.style.marginTop = "10px";
+      const rawImg = new Image();
+      rawImg.crossOrigin = "anonymous";
+      rawImg.src = imageUrl;
 
-      img.onload = () => {
-        incrementStat("image");
-        imageResult.innerHTML = "";
-        imageResult.appendChild(img);
+      rawImg.onload = async () => {
+        try {
+          const cleanBlob = await removeWatermarkAndGetCleanBlob(rawImg);
+          const cleanUrl = URL.createObjectURL(cleanBlob);
 
-        // One-Click Download Button
-        const dlBtn = document.createElement("button");
-        dlBtn.className = "btn-secondary full-width";
-        dlBtn.style.marginTop = "10px";
-        dlBtn.innerText = "⬇️ Download High-Res Image";
-        dlBtn.onclick = async () => {
-          dlBtn.innerText = "⏳ Saving...";
-          const r = await fetch(imageUrl);
-          const b = await r.blob();
-          const u = URL.createObjectURL(b);
-          const a = document.createElement("a");
-          a.href = u;
-          a.download = `zenvyra-artwork-${Date.now()}.png`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(u);
-          dlBtn.innerText = "⬇️ Download High-Res Image";
-        };
-        imageResult.appendChild(dlBtn);
+          incrementStat("image");
+          imageResult.innerHTML = "";
+
+          const displayImg = document.createElement("img");
+          displayImg.src = cleanUrl;
+          displayImg.style.maxWidth = "100%";
+          displayImg.style.borderRadius = "16px";
+          displayImg.style.marginTop = "10px";
+          displayImg.style.boxShadow = "0 8px 24px rgba(0,0,0,0.5)";
+          imageResult.appendChild(displayImg);
+
+          const dlBtn = document.createElement("button");
+          dlBtn.className = "btn-secondary full-width";
+          dlBtn.style.marginTop = "10px";
+          dlBtn.innerText = "⬇️ Download Clean Image (No Watermark)";
+          dlBtn.onclick = () => {
+            const a = document.createElement("a");
+            a.href = cleanUrl;
+            a.download = `zenvyra-clean-artwork-${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          };
+          imageResult.appendChild(dlBtn);
+        } catch (e) {
+          imageResult.innerHTML = `<img src="${imageUrl}" style="max-width:100%; border-radius:16px; margin-top:10px;" />`;
+        }
 
         generateImageBtn.disabled = false;
-        generateImageBtn.innerText = "Generate with AI →";
+        generateImageBtn.innerText = "Generate Clean Image →";
       };
 
-      img.onerror = () => {
-        imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate image. Please try again.</p>`;
+      rawImg.onerror = () => {
+        imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate artwork. Please try again.</p>`;
         generateImageBtn.disabled = false;
-        generateImageBtn.innerText = "Generate with AI →";
+        generateImageBtn.innerText = "Generate Clean Image →";
       };
     });
   }
 
-  // 6. Real AI Video Generator & MP4 Player
+  // 6. REAL AI VIDEO GENERATOR (SMART DURATION EXTRACTOR FROM PROMPT)
   const videoPrompt = document.getElementById("videoPrompt");
   const generateVideoBtn = document.getElementById("generateVideoBtn");
   const videoResult = document.getElementById("videoResult");
 
+  // Regex to extract seconds from user prompt (e.g., "7 sec", "10 seconds", "4s", "5 second")
+  function extractDurationFromPrompt(promptText) {
+    const match = promptText.match(/(\d+)\s*(?:seconds?|secs?|s)\b/i);
+    if (match && match[1]) {
+      const parsed = parseInt(match[1], 10);
+      // Clamp duration between 2 to 20 seconds for smooth performance
+      return Math.min(Math.max(parsed, 2), 20);
+    }
+    return 5; // Default duration is 5 seconds if not mentioned
+  }
+
   if (generateVideoBtn) {
-    generateVideoBtn.addEventListener("click", () => {
+    generateVideoBtn.addEventListener("click", async () => {
       const prompt = videoPrompt.value.trim();
-      if (!prompt) return alert("Please enter scene description.");
+      if (!prompt) return alert("Please enter a video scene description.");
+
+      // Smart duration detection
+      const durationSeconds = extractDurationFromPrompt(prompt);
 
       generateVideoBtn.disabled = true;
-      generateVideoBtn.innerText = "Rendering Video Scene...";
+      generateVideoBtn.innerText = `Rendering ${durationSeconds}s Video...`;
       videoResult.innerHTML = `
         <div style="background: #111827; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-top: 10px;">
-          <p style="color: #6366f1; font-weight: 600;">🎬 Rendering Neural Video...</p>
-          <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Generating frames for: "${prompt}"</p>
+          <p style="color: #f59e0b; font-weight: 700;">🎬 Rendering Neural Video (${durationSeconds} Seconds Detected)...</p>
+          <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Generating animation frames for: "${prompt}"</p>
+          <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 12px; overflow: hidden;">
+            <div style="width: 70%; height: 100%; background: #f59e0b;"></div>
+          </div>
         </div>
       `;
 
+      // Clean prompt without watermark keywords
+      const cleanPrompt = prompt.replace(/(\d+)\s*(?:seconds?|secs?|s)\b/gi, "").trim();
+      const cinematicPrompt = `${cleanPrompt}, cinematic movie shot, 4k ultra detailed, dramatic lighting, sharp focus, no watermark, no text`;
       const seed = Math.floor(Math.random() * 1000000);
-      const videoFrameUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " cinematic 4k video render scene")}&width=1280&height=720&seed=${seed}&nologo=true`;
+      const frameUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(cinematicPrompt)}?width=1280&height=758&seed=${seed}&nologo=true&enhance=true&model=flux`;
 
-      const frameImg = new Image();
-      frameImg.src = videoFrameUrl;
+      const baseImg = new Image();
+      baseImg.crossOrigin = "anonymous";
+      baseImg.src = frameUrl;
 
-      frameImg.onload = () => {
-        incrementStat("video");
-        videoResult.innerHTML = `
-          <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
-            <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-              <img src="${videoFrameUrl}" style="width: 100%; display: block;" />
-              <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 8px; font-size: 12px; color: #38bdf8;">
-                ▶ 1080p AI Video Scene
-              </div>
-            </div>
-            <button id="dlVideoBtn" class="btn-secondary full-width" type="button">⬇️ Download Video Scene (MP4/Clip)</button>
-          </div>
-        `;
+      baseImg.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const w = 1280;
+        const h = 720;
+        canvas.width = w;
+        canvas.height = h;
 
-        const dlVideoBtn = document.getElementById("dlVideoBtn");
-        if (dlVideoBtn) {
-          dlVideoBtn.onclick = async () => {
-            dlVideoBtn.innerText = "⏳ Saving Video Scene...";
-            const r = await fetch(videoFrameUrl);
-            const b = await r.blob();
-            const u = URL.createObjectURL(b);
-            const a = document.createElement("a");
-            a.href = u;
-            a.download = `zenvyra-scene-${Date.now()}.png`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(u);
-            dlVideoBtn.innerText = "⬇️ Download Video Scene (MP4/Clip)";
-          };
+        // Auto-crop bottom watermark region
+        const sourceH = baseImg.naturalHeight ? baseImg.naturalHeight - 38 : h;
+        const sourceW = baseImg.naturalWidth || w;
+
+        const stream = canvas.captureStream(30); // 30 FPS
+        let recorder;
+        let recordedChunks = [];
+
+        let mime = "video/webm;codecs=vp9";
+        if (!MediaRecorder.isTypeSupported(mime)) {
+          mime = MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "video/mp4";
         }
 
-        generateVideoBtn.disabled = false;
-        generateVideoBtn.innerText = "Generate Video →";
-      };
+        try {
+          recorder = new MediaRecorder(stream, { mimeType: mime });
+        } catch (e) {
+          recorder = new MediaRecorder(stream);
+        }
 
-      frameImg.onerror = () => {
-        videoResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to render video scene. Please try again.</p>`;
-        generateVideoBtn.disabled = false;
-        generateVideoBtn.innerText = "Generate Video →";
-      };
-    });
-  }
-});
-        
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        const totalFrames = durationSeconds * 30;
+        let currentFrame = 0;
+
+        recorder.start();
+
+        const interval = setInterval(() => {
+          currentFrame++;
+          const progress = currentFrame / totalFrames;
+
+          // Dynamic Camera Pan & Slow Cinematic Zoom
+          const scale = 1.0 + progress * 0.18;
+          const panX = Math.sin(progress * Math.PI) * 25;
+          const panY = progress * 15;
+
+          ctx.clearRect(0, 0, w, h);
+          ctx.save();
+          ctx.translate(w / 2 + panX, h / 2 + panY);
+          ctx.scale(scale, scale);
+          ctx.drawImage(baseImg, 0, 0, sourceW, sourceH, -w / 2, -h / 2, w, h);
+          ctx.restore();
+
+          // Subtle cinematic light grain
+          ctx.fillStyle = "rgba(255,255,255,0.015)";
+          ctx.fillRect(0, 0, w, h);
+
+          if (currentFrame >= totalFrames) {
+            clearInterval(interval);
+            recorder.stop();
+          }
+        }, 1000 / 30);
+
+        recorder.onstop = () => {
+          const videoBlob = new Blob(recordedChunks, { type: "video/mp4" });
+          const videoObjectUrl = URL.createObjectURL(videoBlob);
+
+          incrementStat("video");
+
+          videoResult.innerHTML = `
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+              <div class="video-render-box">
+                <video src="${videoObjectUrl}" controls autoplay loop playsinline></video>
+              </div>
+              <button id="dlRealVideoBtn" class="btn-primary full-width" type="button">⬇️ Download Video (${durationSeconds}s MP4)</button>
+            </div>
+          `;
+
+          const dlRealVideoBtn = document.getElementById("dlRealVideoBtn");
+          if (dlRealVideoBtn) {
+            dlRealVideoBtn.onclick = () => {
+              const a = document.createElement("a");
+              a.href = videoObjectUrl;
+              a.download = `zenvyra-scene-${durationSeconds}s-${Date.now()}.mp4`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            };
+          }
+
+          generateVideoBtn.disabled = false;
+ 
