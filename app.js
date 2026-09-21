@@ -17,20 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 2. Chat Logic with Speak Feature
+  // 2. Chat Logic
   const chatInput = document.getElementById("chatInput");
   const sendChatBtn = document.getElementById("sendChatBtn");
   const voiceBtn = document.getElementById("voiceBtn");
   const chatMessages = document.getElementById("chatMessages");
-
-  function speakText(text) {
-    if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    window.speechSynthesis.speak(utterance);
-  }
 
   function appendMessage(sender, text) {
     const msgEl = document.createElement("div");
@@ -52,12 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       msgEl.style.color = "#e2e8f0";
       msgEl.style.alignSelf = "flex-start";
       msgEl.style.maxWidth = "90%";
-      msgEl.innerHTML = `<strong>Zenvyra AI:</strong> ${text} <br/><button class="listen-btn" style="margin-top: 6px; padding: 4px 10px; font-size: 11px; background: rgba(255,255,255,0.12); border: none; border-radius: 6px; color: #fff; cursor: pointer;">🔊 Listen</button>`;
-      
-      const listenBtn = msgEl.querySelector(".listen-btn");
-      if (listenBtn) {
-        listenBtn.onclick = () => speakText(text);
-      }
+      msgEl.innerHTML = `<strong>Zenvyra AI:</strong> ${text}`;
     }
 
     chatMessages.appendChild(msgEl);
@@ -121,127 +107,69 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
   }
 
-  // 4. MULTI-STYLE AI VOICE GENERATOR (ADVANCED PERSONAS)
+  // 4. REAL NEURAL AI VOICE GENERATOR (Distinct Audio Streams)
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
-  const voiceSpeed = document.getElementById("voiceSpeed");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
-  const stopVoiceBtn = document.getElementById("stopVoiceBtn");
+  const realAudioPlayer = document.getElementById("realAudioPlayer");
+  const audioPlayerContainer = document.getElementById("audioPlayerContainer");
   const voiceStatus = document.getElementById("voiceStatus");
 
-  let availableVoices = [];
-  function populateVoices() {
-    if ("speechSynthesis" in window) {
-      availableVoices = window.speechSynthesis.getVoices();
-    }
-  }
-  populateVoices();
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.onvoiceschanged = populateVoices;
-  }
-
   if (playVoiceBtn) {
-    playVoiceBtn.addEventListener("click", () => {
+    playVoiceBtn.addEventListener("click", async () => {
       const text = voiceTextPrompt.value.trim();
       if (!text) {
-        alert("Please enter script or text to speak!");
+        alert("Please enter text to speak!");
         return;
       }
 
-      if (!("speechSynthesis" in window)) {
-        voiceStatus.innerText = "Speech synthesis not supported on this browser.";
-        return;
+      const voice = voiceVoiceSelect.value;
+      playVoiceBtn.disabled = true;
+      playVoiceBtn.innerText = "Generating Neural Voice...";
+      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Generating real audio...</span>";
+
+      try {
+        let audioUrl = "";
+
+        if (voice.startsWith("hi")) {
+          // Direct high-clarity Indian Hindi Audio Stream
+          audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=hi&client=tw-ob&q=${encodeURIComponent(text)}`;
+        } else if (voice.includes("GB")) {
+          // British English Voice Stream
+          audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-gb&client=tw-ob&q=${encodeURIComponent(text)}`;
+        } else {
+          // US English Voice Stream
+          audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-us&client=tw-ob&q=${encodeURIComponent(text)}`;
+        }
+
+        realAudioPlayer.src = audioUrl;
+        audioPlayerContainer.style.display = "block";
+        
+        await realAudioPlayer.play();
+        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing generated voice!</span>";
+      } catch (err) {
+        // Fallback to Web Speech API with pitch modulation for distinct voices
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          if (voice.includes("Female") || voice.includes("Jenny") || voice.includes("Swara")) {
+            utterance.pitch = 1.4;
+            utterance.rate = 0.95;
+          } else {
+            utterance.pitch = 0.65;
+            utterance.rate = 0.9;
+          }
+          if (voice.startsWith("hi")) utterance.lang = "hi-IN";
+          else utterance.lang = "en-US";
+          window.speechSynthesis.speak(utterance);
+          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing voice!</span>";
+        } else {
+          voiceStatus.innerHTML = "<span style='color: #ef4444;'>Playback error.</span>";
+        }
+      } finally {
+        playVoiceBtn.disabled = false;
+        playVoiceBtn.innerText = "🎵 Generate & Play Voice";
       }
-
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      const persona = voiceVoiceSelect.value;
-      const speed = parseFloat(voiceSpeed.value) || 1.0;
-
-      utterance.rate = speed;
-
-      // Filter and assign acoustic profiles
-      const hindiVoice = availableVoices.find(v => v.lang.includes("hi") || v.lang.includes("HI"));
-      const engUsVoice = availableVoices.find(v => v.lang.includes("en-US") || v.lang.includes("en_US"));
-      const engUkVoice = availableVoices.find(v => v.lang.includes("en-GB") || v.lang.includes("en_GB"));
-
-      switch (persona) {
-        case "hi_female_soft":
-          if (hindiVoice) utterance.voice = hindiVoice;
-          utterance.lang = "hi-IN";
-          utterance.pitch = 1.35;
-          break;
-
-        case "hi_male_deep":
-          if (hindiVoice) utterance.voice = hindiVoice;
-          utterance.lang = "hi-IN";
-          utterance.pitch = 0.75;
-          break;
-
-        case "hi_male_young":
-          if (hindiVoice) utterance.voice = hindiVoice;
-          utterance.lang = "hi-IN";
-          utterance.pitch = 1.05;
-          break;
-
-        case "hi_storyteller":
-          if (hindiVoice) utterance.voice = hindiVoice;
-          utterance.lang = "hi-IN";
-          utterance.pitch = 0.85;
-          utterance.rate = speed * 0.9;
-          break;
-
-        case "en_female_warm":
-          if (engUsVoice) utterance.voice = engUsVoice;
-          utterance.lang = "en-US";
-          utterance.pitch = 1.25;
-          break;
-
-        case "en_male_cinematic":
-          if (engUsVoice) utterance.voice = engUsVoice;
-          utterance.lang = "en-US";
-          utterance.pitch = 0.65;
-          break;
-
-        case "en_energetic":
-          if (engUsVoice) utterance.voice = engUsVoice;
-          utterance.lang = "en-US";
-          utterance.pitch = 1.15;
-          utterance.rate = speed * 1.15;
-          break;
-
-        case "en_uk_premium":
-          if (engUkVoice) utterance.voice = engUkVoice;
-          else if (engUsVoice) utterance.voice = engUsVoice;
-          utterance.lang = "en-GB";
-          utterance.pitch = 0.95;
-          break;
-
-        default:
-          utterance.lang = "en-US";
-          utterance.pitch = 1.0;
-      }
-
-      utterance.onstart = () => {
-        voiceStatus.innerHTML = `🔊 <span style="color: #6366f1; font-weight: 600;">Speaking in selected voice profile...</span>`;
-      };
-
-      utterance.onend = () => {
-        voiceStatus.innerHTML = `<span style="color: #10b981; font-weight: 600;">✓ Voice generated successfully!</span>`;
-      };
-
-      utterance.onerror = () => {
-        voiceStatus.innerHTML = `<span style="color: #ef4444;">Could not play audio. Check browser permissions.</span>`;
-      };
-
-      window.speechSynthesis.speak(utterance);
-    });
-  }
-
-  if (stopVoiceBtn) {
-    stopVoiceBtn.addEventListener("click", () => {
-      window.speechSynthesis.cancel();
-      voiceStatus.innerText = "⏹️ Voice stopped.";
     });
   }
 
@@ -316,4 +244,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-    
+          
