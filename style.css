@@ -12,16 +12,17 @@ html, body {
   overflow-x: hidden;
 }
 
+/* Central Mobile Container */
 .app-wrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 24px 18px 28px 18px;
+  padding: 24px 18px 36px 18px;
   max-width: 480px;
   margin: 0 auto;
-  gap: 18px;
+  gap: 16px;
 }
 
 /* Header */
@@ -38,7 +39,79 @@ html, body {
   letter-spacing: -0.5px;
 }
 
-/* About Box */
+/* Analytics Dashboard Card */
+.stats-card {
+  width: 100%;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+}
+
+.stats-title {
+  color: #818cf8;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.stats-total {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.stats-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  display: flex;
+  overflow: hidden;
+}
+
+.progress-segment {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.seg-image { background: #38bdf8; }
+.seg-voice { background: #a855f7; }
+.seg-video { background: #f59e0b; }
+
+.stats-indicators {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-image { background: #38bdf8; }
+.dot-voice { background: #a855f7; }
+.dot-video { background: #f59e0b; }
+
+/* About Feature Card */
 .about-card {
   width: 100%;
   background: #111827;
@@ -47,17 +120,17 @@ html, body {
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .about-card p {
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.45;
   color: #cbd5e1;
   font-weight: 500;
 }
 
-/* Nav Switcher */
+/* Nav Switch Tabs */
 .nav-switcher {
   display: flex;
   gap: 8px;
@@ -80,14 +153,8 @@ html, body {
   transition: all 0.2s ease;
 }
 
-.nav-btn .icon {
-  font-size: 20px;
-}
-
-.nav-btn .label {
-  font-size: 11.5px;
-  font-weight: 600;
-}
+.nav-btn .icon { font-size: 20px; }
+.nav-btn .label { font-size: 11.5px; font-weight: 600; }
 
 .nav-btn.active {
   background: #ffffff;
@@ -116,6 +183,13 @@ html, body {
   width: 100%;
 }
 
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
 .badge {
   display: inline-block;
   padding: 4px 10px;
@@ -124,18 +198,25 @@ html, body {
   border-radius: 20px;
   background: rgba(99, 102, 241, 0.18);
   color: #818cf8;
-  margin-bottom: 6px;
+}
+
+.link-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .card-hero h2 {
-  font-size: 24px;
+  font-size: 23px;
   font-weight: 800;
   color: #ffffff;
   margin-bottom: 4px;
 }
 
 .card-hero p {
-  font-size: 14px;
+  font-size: 13.5px;
   color: #94a3b8;
   line-height: 1.4;
 }
@@ -144,7 +225,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 180px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
@@ -152,22 +233,22 @@ html, body {
 .input-card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   background: #111827;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
-  padding: 18px;
+  padding: 16px;
   width: 100%;
 }
 
 textarea {
   width: 100%;
-  min-height: 90px;
+  min-height: 85px;
   background: transparent;
   border: none;
   outline: none;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 15.5px;
   line-height: 1.45;
   resize: none;
 }
@@ -179,12 +260,12 @@ textarea {
 
 .btn-primary {
   flex: 2;
-  padding: 15px;
+  padding: 14px;
   border-radius: 14px;
   background: linear-gradient(135deg, #6366f1, #a855f7);
   color: #ffffff;
   border: none;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
@@ -192,7 +273,7 @@ textarea {
 
 .btn-secondary {
   flex: 1;
-  padding: 15px;
+  padding: 14px;
   border-radius: 14px;
   background: #1e293b;
   color: #f1f5f9;
@@ -208,17 +289,35 @@ textarea {
 
 .ratio-dropdown {
   width: 100%;
-  padding: 14px;
+  padding: 13px;
   background: #090d16;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #ffffff;
   border-radius: 14px;
-  font-size: 15px;
+  font-size: 14.5px;
   outline: none;
 }
 
 .result-area {
-  margin-top: 10px;
+  margin-top: 6px;
   text-align: center;
   width: 100%;
+  font-size: 13.5px;
+}
+
+/* Chat Action Buttons */
+.chat-action-bar {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.chat-chip {
+  padding: 3px 8px;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
 }
