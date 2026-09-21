@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
   }
 
-  // 4. REAL CLIENT-SIDE NEURAL VOICE GENERATION & GUARANTEED DOWNLOAD
+  // 4. REAL INDIAN AI VOICE GENERATION & RELIABLE MP3 DOWNLOAD
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
@@ -116,64 +116,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const downloadVoiceBtn = document.getElementById("downloadVoiceBtn");
   const voiceStatus = document.getElementById("voiceStatus");
 
-  let allVoices = [];
-  function loadVoices() {
+  let systemVoices = [];
+  function cacheVoices() {
     if ("speechSynthesis" in window) {
-      allVoices = window.speechSynthesis.getVoices();
+      systemVoices = window.speechSynthesis.getVoices();
     }
   }
-  loadVoices();
+  cacheVoices();
   if ("speechSynthesis" in window) {
-    window.speechSynthesis.onvoiceschanged = loadVoices;
+    window.speechSynthesis.onvoiceschanged = cacheVoices;
   }
-
-  // Audio Buffer to WAV Converter for Guaranteed Downloads
-  function createWavBlob(text, rate, pitch) {
-    const sampleRate = 22050;
-    const duration = Math.max(1.5, text.length * 0.08 * (1 / rate));
-    const numSamples = Math.floor(sampleRate * duration);
-    const buffer = new ArrayBuffer(44 + numSamples * 2);
-    const view = new DataView(buffer);
-
-    // WAV Header
-    const writeString = (view, offset, string) => {
-      for (let i = 0; i < string.length; i++) {
-        view.setUint8(offset + i, string.charCodeAt(i));
-      }
-    };
-
-    writeString(view, 0, "RIFF");
-    view.setUint32(4, 36 + numSamples * 2, true);
-    writeString(view, 8, "WAVE");
-    writeString(view, 12, "fmt ");
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true); // PCM
-    view.setUint16(22, 1, true); // Mono
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * 2, true);
-    view.setUint16(32, 2, true);
-    view.setUint16(34, 16, true);
-    writeString(view, 36, "data");
-    view.setUint32(40, numSamples * 2, true);
-
-    // Acoustic wave synthesis based on pitch
-    const baseFreq = 180 * pitch;
-    let offset = 44;
-    for (let i = 0; i < numSamples; i++) {
-      const t = i / sampleRate;
-      const envelope = Math.sin((Math.PI * i) / numSamples);
-      const sample = Math.sin(2 * Math.PI * baseFreq * t) * 0.5 * envelope;
-      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
-      offset += 2;
-    }
-
-    return new Blob([view], { type: "audio/wav" });
-  }
-
-  let generatedAudioUrl = null;
 
   if (playVoiceBtn) {
-    playVoiceBtn.addEventListener("click", () => {
+    playVoiceBtn.addEventListener("click", async () => {
       const text = voiceTextPrompt.value.trim();
       if (!text) {
         alert("Pehle kuch text ya script likhiye!");
@@ -183,96 +138,111 @@ document.addEventListener("DOMContentLoaded", () => {
       const voice = voiceVoiceSelect.value;
       playVoiceBtn.disabled = true;
       playVoiceBtn.innerText = "Synthesizing Audio...";
-      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Generating Indian voice...</span>";
+      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Generating real audio...</span>";
 
-      // Acoustic Voice Presets
-      let targetPitch = 1.0;
-      let targetRate = 1.0;
+      // 1. Language & Accent Mapping
       let langCode = "hi-IN";
+      let pitch = 1.0;
+      let rate = 1.0;
 
       if (voice === "Aditi") {
-        targetPitch = 1.4;  // Sweet Female
-        targetRate = 1.0;
+        langCode = "hi-IN";
+        pitch = 1.45; // Sweet Indian Female
+        rate = 1.0;
       } else if (voice === "Kajal") {
-        targetPitch = 1.25; // Expressive
-        targetRate = 0.95;
+        langCode = "hi-IN";
+        pitch = 1.2;  // Expressive Female
+        rate = 0.95;
       } else if (voice === "Raveena") {
-        targetPitch = 1.1;  // Corporate
-        targetRate = 1.05;
+        langCode = "hi-IN";
+        pitch = 1.05; // Mature Corporate Female
+        rate = 1.0;
       } else if (voice === "hi_male_deep") {
-        targetPitch = 0.65; // Deep Male
-        targetRate = 0.9;
+        langCode = "hi-IN";
+        pitch = 0.65; // Deep Male Bass
+        rate = 0.9;
       } else if (voice === "hi_male_young") {
-        targetPitch = 0.95; // Young Male
-        targetRate = 1.15;
+        langCode = "hi-IN";
+        pitch = 0.95; // Young Energetic Male
+        rate = 1.15;
       } else if (voice === "hi_male_news") {
-        targetPitch = 0.8;  // News Broadcaster
-        targetRate = 1.0;
+        langCode = "hi-IN";
+        pitch = 0.8;  // News Narrator
+        rate = 1.02;
       } else if (voice === "Joanna") {
-        targetPitch = 1.2;
         langCode = "en-US";
+        pitch = 1.25;
       } else if (voice === "Matthew") {
-        targetPitch = 0.7;
         langCode = "en-US";
+        pitch = 0.7;
       } else {
-        targetPitch = 0.85;
         langCode = "en-GB";
+        pitch = 0.9;
       }
 
-      // Generate Downloadable Audio Blob
-      const audioBlob = createWavBlob(text, targetRate, targetPitch);
-      if (generatedAudioUrl) URL.revokeObjectURL(generatedAudioUrl);
-      generatedAudioUrl = URL.createObjectURL(audioBlob);
+      // 2. Direct Online Audio Source
+      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${langCode.split("-")[0]}&client=tw-ob`;
 
-      realAudioPlayer.src = generatedAudioUrl;
-      audioPlayerContainer.style.display = "flex";
+      let audioWorked = false;
 
-      // Live High-Fidelity Speech Utterance
-      if ("speechSynthesis" in window) {
+      // Try playing online audio
+      try {
+        realAudioPlayer.src = audioUrl;
+        audioPlayerContainer.style.display = "flex";
+        await realAudioPlayer.play();
+        audioWorked = true;
+        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Voice playing online!</span>";
+      } catch (err) {
+        // If external audio source blocked on mobile, trigger Web Speech engine
+        audioWorked = false;
+      }
+
+      if (!audioWorked && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = langCode;
-        utterance.pitch = targetPitch;
-        utterance.rate = targetRate;
+        utterance.pitch = pitch;
+        utterance.rate = rate;
 
-        // Try picking matching system voice if installed
-        const matchVoice = allVoices.find(v => v.lang.includes("hi") || v.lang.includes("en-IN"));
-        if (matchVoice && langCode.startsWith("hi")) {
-          utterance.voice = matchVoice;
+        const matchedVoice = systemVoices.find(v => v.lang.toLowerCase().includes(langCode.toLowerCase().replace("-", "_")) || v.lang.toLowerCase().includes(langCode.toLowerCase()));
+        if (matchedVoice) {
+          utterance.voice = matchedVoice;
         }
 
+        utterance.onstart = () => {
+          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing voice audio!</span>";
+        };
         utterance.onend = () => {
-          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Voice completed. Click below to download!</span>";
+          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Voice completed.</span>";
         };
 
         window.speechSynthesis.speak(utterance);
+        audioPlayerContainer.style.display = "flex";
       }
 
-      voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing voice audio!</span>";
       playVoiceBtn.disabled = false;
       playVoiceBtn.innerText = "🎵 Generate Voice Audio →";
     });
   }
 
-  // GUARANTEED ONE-TAP DOWNLOAD
+  // DOWNLOAD BUTTON DIRECT ACTION
   if (downloadVoiceBtn) {
     downloadVoiceBtn.addEventListener("click", () => {
-      if (!generatedAudioUrl) {
-        alert("Pehle voice audio generate kijiye!");
+      const text = voiceTextPrompt.value.trim();
+      if (!text) {
+        alert("Pehle text likh kar voice generate karein!");
         return;
       }
 
-      downloadVoiceBtn.innerText = "⏳ Downloading...";
-      const a = document.createElement("a");
-      a.href = generatedAudioUrl;
-      a.download = `zenvyra-audio-${Date.now()}.wav`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const voice = voiceVoiceSelect.value;
+      const lang = voice.startsWith("hi") || voice === "Aditi" || voice === "Kajal" || voice === "Raveena" ? "hi" : "en";
+      const directDownloadUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob`;
 
-      setTimeout(() => {
-        downloadVoiceBtn.innerText = "⬇️ Download MP3 File";
-      }, 700);
+      // Trigger instant save in new tab / download
+      const win = window.open(directDownloadUrl, "_blank");
+      if (!win) {
+        window.location.href = directDownloadUrl;
+      }
     });
   }
 
@@ -347,4 +317,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-                
+          
