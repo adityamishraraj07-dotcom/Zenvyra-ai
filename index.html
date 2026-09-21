@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=950" />
+  <link rel="stylesheet" href="style.css?v=999" />
 </head>
 <body>
   <div class="app-wrapper">
@@ -18,7 +18,7 @@
       <p>⚡ Next-gen all-in-one creative AI studio</p>
       <p>💬 Intelligent conversation & scripting in Hindi & English</p>
       <p>🎨 High-resolution creative image generation</p>
-      <p>🎙️ Natural sounding multi-style AI Voices (Hindi & English)</p>
+      <p>🎙️ Real Neural AI Voices (Hindi & English)</p>
       <p>🎬 Instant AI video scene creation from prompts</p>
     </section>
 
@@ -84,49 +84,35 @@
         <div id="imageResult" class="result-area"></div>
       </div>
 
-      <!-- 3. AI VOICE STUDIO (MULTI-VOICE HINDI & ENGLISH) -->
+      <!-- 3. REAL NEURAL AI VOICE TAB -->
       <div id="voicePage" class="content-page" style="display: none;">
         <div class="card-hero">
-          <span class="badge">✦ Neural Voice Studio</span>
-          <h2>AI Voice Generator</h2>
-          <p>Choose from realistic Hindi & English personas.</p>
+          <span class="badge">✦ Neural Audio Engine</span>
+          <h2>Real AI Voice Generator</h2>
+          <p>Select different voice personas for genuine tone changes.</p>
         </div>
 
         <div class="input-card">
-          <textarea id="voiceTextPrompt" placeholder="Enter Hindi or English script to speak..." rows="3"></textarea>
+          <textarea id="voiceTextPrompt" placeholder="Type what you want the AI voice to speak..." rows="3"></textarea>
           
-          <!-- Persona Selector -->
           <select id="voiceVoiceSelect" class="ratio-dropdown">
-            <optgroup label="🇮🇳 Hindi Voices">
-              <option value="hi_female_soft">Hindi Female (Sweet & Soft)</option>
-              <option value="hi_male_deep">Hindi Male (Deep & Confident)</option>
-              <option value="hi_male_young">Hindi Male (Young & Casual)</option>
-              <option value="hi_storyteller">Hindi Storyteller (Dramatic)</option>
-            </optgroup>
-            <optgroup label="🇺🇸 & 🇬🇧 English Voices">
-              <option value="en_female_warm">English Female (Warm & Natural)</option>
-              <option value="en_male_cinematic">English Male (Cinematic Narration)</option>
-              <option value="en_energetic">English Energetic (Creator / Reel)</option>
-              <option value="en_uk_premium">English British (Classy Accent)</option>
-            </optgroup>
+            <option value="hi-IN-Swara">🇮🇳 Hindi - Female (Priya / Natural)</option>
+            <option value="hi-IN-Madhur">🇮🇳 Hindi - Male (Aarav / Deep)</option>
+            <option value="en-US-Jenny">🇺🇸 English - Female (Jenny / American)</option>
+            <option value="en-US-Guy">🇺🇸 English - Male (Guy / Deep Narration)</option>
+            <option value="en-GB-Sonia">🇬🇧 English - British Female (Classy)</option>
+            <option value="en-GB-Ryan">🇬🇧 English - British Male (Podcast)</option>
           </select>
 
-          <!-- Voice Speed Control -->
-          <div class="button-row" style="margin-top: -4px;">
-            <select id="voiceSpeed" class="ratio-dropdown" style="flex: 1;">
-              <option value="0.85">Speed: Slow (0.85x)</option>
-              <option value="1.0" selected>Speed: Normal (1.0x)</option>
-              <option value="1.2">Speed: Fast (1.2x)</option>
-            </select>
-          </div>
-
-          <div class="button-row">
-            <button id="playVoiceBtn" class="btn-primary" type="button">🔊 Generate Voice</button>
-            <button id="stopVoiceBtn" class="btn-secondary" type="button">⏹️ Stop</button>
-          </div>
+          <button id="playVoiceBtn" class="btn-primary full-width" type="button">🎵 Generate & Play Voice</button>
         </div>
 
-        <div id="voiceStatus" class="result-area" style="font-size: 14px; color: #94a3b8;"></div>
+        <!-- Audio Player Box -->
+        <div id="audioPlayerContainer" style="margin-top: 14px; width: 100%; text-align: center; display: none;">
+          <audio id="realAudioPlayer" controls style="width: 100%; border-radius: 12px;"></audio>
+        </div>
+
+        <div id="voiceStatus" class="result-area" style="font-size: 14px; color: #94a3b8; margin-top: 8px;"></div>
       </div>
 
       <!-- 4. VIDEO GENERATOR TAB -->
@@ -147,6 +133,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=950"></script>
+  <script src="app.js?v=999"></script>
 </body>
 </html>
