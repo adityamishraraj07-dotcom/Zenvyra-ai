@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=5000" />
+  <title>Zenvyra AI - Creative Studio</title>
+  <link rel="stylesheet" href="style.css?v=8000" />
 </head>
 <body>
   <div class="app-wrapper">
@@ -13,16 +13,34 @@
       <h1 class="brand-title">Zenvyra AI</h1>
     </header>
 
-    <!-- Features Overview -->
+    <!-- Usage Analytics Dashboard -->
+    <section class="stats-card">
+      <div class="stats-header">
+        <span class="stats-title">✦ Studio Usage Analytics</span>
+        <span id="totalGenerations" class="stats-total">0 Total Items</span>
+      </div>
+      <div class="stats-progress-bar">
+        <div id="barImage" class="progress-segment seg-image" style="width: 0%;"></div>
+        <div id="barVoice" class="progress-segment seg-voice" style="width: 0%;"></div>
+        <div id="barVideo" class="progress-segment seg-video" style="width: 0%;"></div>
+      </div>
+      <div class="stats-indicators">
+        <div class="stat-item"><span class="dot dot-image"></span>Images: <strong id="statImgText">0 (0%)</strong></div>
+        <div class="stat-item"><span class="dot dot-voice"></span>Voices: <strong id="statVoiceText">0 (0%)</strong></div>
+        <div class="stat-item"><span class="dot dot-video"></span>Videos: <strong id="statVideoText">0 (0%)</strong></div>
+      </div>
+    </section>
+
+    <!-- About Overview -->
     <section class="about-card">
       <p>⚡ Next-gen all-in-one creative AI studio</p>
-      <p>💬 Intelligent conversation & scripting assistance</p>
+      <p>💬 Intelligent conversation & scripting in Hindi & English</p>
       <p>🎨 High-resolution creative image generation</p>
-      <p>🎙️ Natural AI voice synthesis & direct audio download</p>
+      <p>🎙️ Natural sounding multi-persona AI voices & MP3 save</p>
       <p>🎬 Instant AI video scene creation from prompts</p>
     </section>
 
-    <!-- Navigation Tabs -->
+    <!-- 4 Switcher Tabs -->
     <nav class="nav-switcher">
       <button class="nav-btn active" data-page="chat">
         <span class="icon">💬</span>
@@ -42,20 +60,23 @@
       </button>
     </nav>
 
-    <!-- Main Workspace -->
+    <!-- Main Dynamic Workspace -->
     <main class="workspace">
       <!-- 1. AI CHAT TAB -->
       <div id="chatPage" class="content-page active">
         <div class="card-hero">
-          <span class="badge">✦ Zenvyra Assistant</span>
+          <div class="hero-top">
+            <span class="badge">✦ Zenvyra Assistant</span>
+            <button id="clearChatBtn" class="link-btn" type="button">Clear Chat</button>
+          </div>
           <h2>How can I help you today?</h2>
-          <p>Type your message or use voice input below.</p>
+          <p>Type in English or Hindi, or use voice input below.</p>
         </div>
 
         <div id="chatMessages" class="chat-display"></div>
 
         <div class="input-card">
-          <textarea id="chatInput" placeholder="Message Zenvyra AI..." rows="3"></textarea>
+          <textarea id="chatInput" placeholder="Message Zenvyra AI (English / Hindi)..." rows="3"></textarea>
           <div class="button-row">
             <button id="voiceBtn" class="btn-secondary" type="button">🎙️ Voice</button>
             <button id="sendChatBtn" class="btn-primary" type="button">Send →</button>
@@ -84,50 +105,45 @@
         <div id="imageResult" class="result-area"></div>
       </div>
 
-      <!-- 3. AI VOICE GENERATOR TAB -->
+      <!-- 3. REAL AI VOICE STUDIO -->
       <div id="voicePage" class="content-page" style="display: none;">
         <div class="card-hero">
           <span class="badge">✦ Neural Voice Studio</span>
-          <h2>AI Voice Generator</h2>
-          <p>Select a voice persona to listen and download audio.</p>
+          <h2>Real AI Voice Generator</h2>
+          <p>Generate authentic human speech and download as audible MP3.</p>
         </div>
 
         <div class="input-card">
-          <textarea id="voiceTextPrompt" placeholder="Enter the text or script you want the AI to speak..." rows="3"></textarea>
+          <textarea id="voiceTextPrompt" placeholder="Type script or message in English or Hindi..." rows="3"></textarea>
           
           <select id="voiceVoiceSelect" class="ratio-dropdown">
             <optgroup label="Indian Accents">
-              <option value="in_female_soft">Indian Voice - Female (Natural & Soft)</option>
-              <option value="in_female_expressive">Indian Voice - Female (Expressive & Warm)</option>
-              <option value="in_female_pro">Indian Voice - Female (Professional)</option>
-              <option value="in_male_deep">Indian Voice - Male (Deep Narration)</option>
-              <option value="in_male_young">Indian Voice - Male (Youth & Energetic)</option>
-              <option value="in_male_broadcast">Indian Voice - Male (Broadcaster)</option>
+              <option value="hi_female">Indian Voice - Female (Sweet & Clear)</option>
+              <option value="hi_male">Indian Voice - Male (Deep Narration)</option>
             </optgroup>
             <optgroup label="International Accents">
-              <option value="us_female">US English - Female (Natural)</option>
-              <option value="us_male">US English - Male (Cinematic)</option>
-              <option value="uk_male">UK English - Male (Classic)</option>
+              <option value="en_us">US English - Natural Tone</option>
+              <option value="en_uk">UK English - Classic Accent</option>
             </optgroup>
           </select>
 
           <button id="playVoiceBtn" class="btn-primary full-width" type="button">🔊 Play Voice</button>
-          <button id="downloadVoiceBtn" class="btn-secondary full-width" type="button" style="text-align: center; padding: 14px; font-weight: 700; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);">⬇️ Download Audio File</button>
+          <button id="downloadVoiceBtn" class="btn-secondary full-width" type="button">⬇️ Download MP3 File</button>
         </div>
 
-        <div id="voiceStatus" class="result-area" style="font-size: 14px; color: #94a3b8; margin-top: 6px;"></div>
+        <div id="voiceStatus" class="result-area"></div>
       </div>
 
-      <!-- 4. VIDEO GENERATOR TAB -->
+      <!-- 4. REAL AI VIDEO GENERATOR TAB -->
       <div id="videoPage" class="content-page" style="display: none;">
         <div class="card-hero">
-          <span class="badge">✦ Cinematic AI</span>
+          <span class="badge">✦ Cinematic AI Engine</span>
           <h2>AI Video Generator</h2>
-          <p>Transform your script into cinematic scenes effortlessly.</p>
+          <p>Transform text scripts into dynamic animated video scenes.</p>
         </div>
 
         <div class="input-card">
-          <textarea id="videoPrompt" placeholder="Describe your video prompt or scene idea..." rows="3"></textarea>
+          <textarea id="videoPrompt" placeholder="Describe the video scene (e.g. Cyberpunk car driving through rainy neon city)..." rows="3"></textarea>
           <button id="generateVideoBtn" class="btn-primary full-width" type="button">Generate Video →</button>
         </div>
 
@@ -136,6 +152,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=5000"></script>
+  <script src="app.js?v=8000"></script>
 </body>
 </html>
