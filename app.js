@@ -1,239 +1,237 @@
-// ================= PAGE SWITCHING =================
-const navItems = document.querySelectorAll(".nav-item");
-const pages = {
-  chat: document.getElementById("chatPage"),
-  image: document.getElementById("imagePage"),
-  video: document.getElementById("videoPage")
-};
+// ================= ZENVYRA AI COMPLETE APPLICATION LOGIC =================
 
-function switchPage(target) {
-  Object.values(pages).forEach((page) => {
-    if (page) {
-      page.style.setProperty("display", "none", "important");
-      page.classList.remove("active");
-    }
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. NAVIGATION TAB SWITCHER
+  const navBtns = document.querySelectorAll(".nav-btn");
+  const contentPages = document.querySelectorAll(".content-page");
+
+  navBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      // Remove active class from all buttons
+      navBtns.forEach((b) => b.classList.remove("active"));
+      // Hide all pages
+      contentPages.forEach((page) => (page.style.display = "none"));
+
+      // Set active button
+      btn.classList.add("active");
+
+      // Show selected page
+      const targetPageId = btn.getAttribute("data-page") + "Page";
+      const targetPage = document.getElementById(targetPageId);
+      if (targetPage) {
+        targetPage.style.display = "flex";
+      }
+    });
   });
 
-  if (pages[target]) {
-    pages[target].style.setProperty("display", "block", "important");
-    pages[target].classList.add("active");
+  // 2. AI CHAT SYSTEM
+  const chatInput = document.getElementById("chatInput");
+  const sendChatBtn = document.getElementById("sendChatBtn");
+  const voiceBtn = document.getElementById("voiceBtn");
+  const chatMessages = document.getElementById("chatMessages");
+
+  function appendMessage(sender, text) {
+    const msgEl = document.createElement("div");
+    msgEl.style.padding = "10px 14px";
+    msgEl.style.borderRadius = "12px";
+    msgEl.style.fontSize = "14px";
+    msgEl.style.lineHeight = "1.4";
+    msgEl.style.wordBreak = "break-word";
+
+    if (sender === "user") {
+      msgEl.style.background = "#1e293b";
+      msgEl.style.color = "#ffffff";
+      msgEl.style.alignSelf = "flex-end";
+      msgEl.style.maxWidth = "85%";
+      msgEl.innerHTML = `<strong>You:</strong> ${text}`;
+    } else {
+      msgEl.style.background = "rgba(99, 102, 241, 0.15)";
+      msgEl.style.border = "1px solid rgba(99, 102, 241, 0.3)";
+      msgEl.style.color = "#e2e8f0";
+      msgEl.style.alignSelf = "flex-start";
+      msgEl.style.maxWidth = "90%";
+      msgEl.innerHTML = `<strong>Zenvyra AI:</strong> ${text}`;
+    }
+
+    chatMessages.appendChild(msgEl);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
-}
 
-navItems.forEach((item) => {
-  item.addEventListener("click", (event) => {
-    event.preventDefault();
-    const target = item.getAttribute("data-page");
-    navItems.forEach((nav) => nav.classList.remove("active"));
-    item.classList.add("active");
-    switchPage(target);
-  });
-});
+  async function handleChat() {
+    const query = chatInput.value.trim();
+    if (!query) return;
 
-switchPage("chat");
+    appendMessage("user", query);
+    chatInput.value = "";
+    sendChatBtn.disabled = true;
+    sendChatBtn.innerText = "Thinking...";
 
-// ================= CHAT LOGIC =================
-const chatInput = document.getElementById("chatInput");
-const sendChat = document.getElementById("sendChat");
-const chatMessages = document.getElementById("chatMessages");
-const newChatBtn = document.getElementById("newChatBtn");
-
-function sendMessage() {
-  if (!chatInput || !chatMessages) return;
-  const message = chatInput.value.trim();
-  if (message === "") return;
-
-  const userMsg = document.createElement("div");
-  userMsg.className = "user-message";
-  userMsg.textContent = message;
-  chatMessages.appendChild(userMsg);
-
-  chatInput.value = "";
-
-  setTimeout(() => {
-    const aiMsg = document.createElement("div");
-    aiMsg.className = "ai-message";
-    aiMsg.textContent = "Hello! I am Zenvyra AI. How can I assist you today?";
-    chatMessages.appendChild(aiMsg);
-  }, 1000);
-}
-
-if (sendChat && chatInput) {
-  sendChat.addEventListener("click", sendMessage);
-  chatInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+    try {
+      // Free open AI inference endpoint
+      const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(query)}?model=openai`);
+      const data = await response.text();
+      appendMessage("ai", data || "Zenvyra AI response could not be generated.");
+    } catch (err) {
+      appendMessage("ai", "Sorry, an error occurred while connecting to Zenvyra AI server.");
+    } finally {
+      sendChatBtn.disabled = false;
+      sendChatBtn.innerText = "Send →";
     }
-  });
-}
+  }
 
-if (newChatBtn && chatMessages) {
-  newChatBtn.addEventListener("click", () => {
-    chatMessages.innerHTML = `
-      <div class="welcome-box">
-        <h3>✦ Welcome to Zenvyra AI</h3>
-        <p>Your intelligent assistant is ready. Type in English or Hindi, or use the voice button below.</p>
-      </div>
-    `;
-  });
-}
+  if (sendChatBtn) {
+    sendChatBtn.addEventListener("click", handleChat);
+  }
 
-// ================= VOICE LOGIC =================
-const voiceBtn = document.getElementById("voiceBtn");
-if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.lang = "hi-IN";
+  if (chatInput) {
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleChat();
+      }
+    });
+  }
 
-  if (voiceBtn) {
+  // 3. VOICE RECOGNITION (HINDI / ENGLISH)
+  if (voiceBtn && ("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "hi-IN"; // Supports Hindi & English
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
     voiceBtn.addEventListener("click", () => {
       try {
         recognition.start();
-        voiceBtn.textContent = "🔴";
-      } catch (err) {
+        voiceBtn.innerText = "Listening...";
+      } catch (e) {
         recognition.stop();
-        voiceBtn.textContent = "🎙️";
+        voiceBtn.innerText = "🎙️ Voice";
       }
     });
 
-    recognition.onresult = (e) => {
-      if (chatInput) chatInput.value = e.results[0][0].transcript;
-      voiceBtn.textContent = "🎙️";
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      chatInput.value = transcript;
+      voiceBtn.innerText = "🎙️ Voice";
+      handleChat();
+    };
+
+    recognition.onerror = () => {
+      voiceBtn.innerText = "🎙️ Voice";
     };
 
     recognition.onend = () => {
-      voiceBtn.textContent = "🎙️";
+      voiceBtn.innerText = "🎙️ Voice";
     };
   }
-}
 
-// ================= IMAGE GENERATOR LOGIC (Dynamic Aspect Ratio + Prompt Accurate) =================
-const generateImageBtn = document.getElementById("generateImageBtn");
-const imagePrompt = document.getElementById("imagePrompt");
-const imageUpload = document.getElementById("imageUpload");
-const imageResult = document.getElementById("imageResult");
+  // 4. IMAGE GENERATOR (POLLINATIONS FLUX STUDIO)
+  const imagePrompt = document.getElementById("imagePrompt");
+  const aspectRatio = document.getElementById("aspectRatio");
+  const generateImageBtn = document.getElementById("generateImageBtn");
+  const imageResult = document.getElementById("imageResult");
 
-if (generateImageBtn) {
-  generateImageBtn.addEventListener("click", () => {
-    const rawPrompt = imagePrompt ? imagePrompt.value.trim() : "";
-
-    if (!rawPrompt && (!imageUpload || !imageUpload.files[0])) {
-      alert("Please enter an image description prompt!");
-      return;
-    }
-
-    let elapsed = 0;
-    const startTime = Date.now();
-
-    imageResult.innerHTML = `
-      <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-        <span style="color:var(--accent); font-weight:600;">✦ Rendering your AI visual...</span>
-        <span id="liveTimer" style="color:var(--muted); font-size:13px;">Time elapsed: 0s</span>
-      </div>
-    `;
-
-    const timer = setInterval(() => {
-      elapsed++;
-      const timerEl = document.getElementById("liveTimer");
-      if (timerEl) timerEl.textContent = `Time elapsed: ${elapsed}s`;
-    }, 1000);
-
-    // Check user intent for aspect ratio
-    const lowerPrompt = rawPrompt.toLowerCase();
-    let imgWidth = 1024;
-    let imgHeight = 1024;
-
-    if (lowerPrompt.includes("landscape") || lowerPrompt.includes("wallpaper") || lowerPrompt.includes("wide") || lowerPrompt.includes("16:9")) {
-      imgWidth = 1280;
-      imgHeight = 720;
-    } else if (lowerPrompt.includes("portrait") || lowerPrompt.includes("story") || lowerPrompt.includes("vertical") || lowerPrompt.includes("9:16")) {
-      imgWidth = 768;
-      imgHeight = 1152;
-    }
-
-    // General high-quality enhancers (Bina kisi hardcoded portrait tag ke)
-    const qualityBoost = "masterpiece, 8k resolution, highly detailed, sharp focus, professional lighting, photorealistic";
-    const negativeFilter = "blur, hazy, soft focus, deformed, bad anatomy, low quality, artifacts, distorted";
-    
-    const finalPromptText = `${rawPrompt}, ${qualityBoost}, no ${negativeFilter}`;
-    const query = encodeURIComponent(finalPromptText);
-    const seed = Math.floor(Math.random() * 90000000) + 1000000;
-
-    const finalUrl = `https://image.pollinations.ai/prompt/${query}?width=${imgWidth}&height=${imgHeight}&model=flux&nologo=1&seed=${seed}`;
-
-    // Clean frame jo watermark strip ko cut karta hai
-    const frame = document.createElement("div");
-    frame.style.width = "100%";
-    frame.style.maxWidth = "460px";
-    frame.style.aspectRatio = `${imgWidth} / ${imgHeight * 0.94}`;
-    frame.style.overflow = "hidden";
-    frame.style.borderRadius = "14px";
-    frame.style.marginTop = "14px";
-    frame.style.boxShadow = "0 12px 36px rgba(0,0,0,0.65)";
-    frame.style.background = "#0f172a";
-
-    const img = document.createElement("img");
-    img.src = finalUrl;
-    img.alt = "Generated Artwork";
-    img.style.width = "100%";
-    img.style.height = "106.5%";
-    img.style.objectFit = "cover";
-    img.style.objectPosition = "top";
-    img.style.display = "block";
-
-    frame.appendChild(img);
-
-    // Download Button
-    const downloadBtn = document.createElement("button");
-    downloadBtn.textContent = "⬇ Download Image";
-    downloadBtn.style.marginTop = "14px";
-    downloadBtn.style.padding = "10px 22px";
-    downloadBtn.style.borderRadius = "8px";
-    downloadBtn.style.border = "none";
-    downloadBtn.style.background = "linear-gradient(135deg, #6366f1, #a855f7)";
-    downloadBtn.style.color = "#ffffff";
-    downloadBtn.style.fontSize = "14px";
-    downloadBtn.style.fontWeight = "600";
-    downloadBtn.style.cursor = "pointer";
-    downloadBtn.style.boxShadow = "0 4px 14px rgba(99, 102, 241, 0.4)";
-
-    downloadBtn.onclick = async () => {
-      downloadBtn.textContent = "⏳ Downloading...";
-      try {
-        const res = await fetch(finalUrl);
-        const blob = await res.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = blobUrl;
-        a.download = `zenvyra_${Date.now()}.jpg`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(blobUrl);
-        downloadBtn.textContent = "✓ Downloaded!";
-        setTimeout(() => (downloadBtn.textContent = "⬇ Download Image"), 2000);
-      } catch (err) {
-        window.open(finalUrl, "_blank");
-        downloadBtn.textContent = "⬇ Download Image";
+  if (generateImageBtn) {
+    generateImageBtn.addEventListener("click", async () => {
+      const prompt = imagePrompt.value.trim();
+      if (!prompt) {
+        alert("Please describe the image first!");
+        return;
       }
-    };
 
-    img.onload = () => {
-      clearInterval(timer);
-      const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
-      imageResult.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width: 100%;">
-          <span style="color:#4ade80; font-size:13px; font-weight:600; margin-bottom:8px;">✓ Rendered in ${totalTime}s (${imgWidth}x${imgHeight})</span>
+      generateImageBtn.disabled = true;
+      generateImageBtn.innerText = "Creating Artwork...";
+      imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Generating your high-resolution image, please wait...</p>`;
+
+      let width = 1024;
+      let height = 1024;
+      const ratio = aspectRatio ? aspectRatio.value : "1:1";
+
+      if (ratio === "16:9") {
+        width = 1280;
+        height = 720;
+      } else if (ratio === "9:16") {
+        width = 720;
+        height = 1280;
+      }
+
+      const seed = Math.floor(Math.random() * 1000000);
+      const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${seed}&nologo=true&model=flux`;
+
+      const img = new Image();
+      img.src = imageUrl;
+      img.style.maxWidth = "100%";
+      img.style.borderRadius = "16px";
+      img.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
+      img.style.marginTop = "10px";
+
+      img.onload = () => {
+        imageResult.innerHTML = "";
+        imageResult.appendChild(img);
+
+        // Download Action Button
+        const downloadBtn = document.createElement("button");
+        downloadBtn.innerText = "⬇️ Download Image";
+        downloadBtn.className = "btn-secondary full-width";
+        downloadBtn.style.marginTop = "10px";
+        downloadBtn.onclick = async () => {
+          try {
+            const resp = await fetch(imageUrl);
+            const blob = await resp.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = blobUrl;
+            link.download = `zenvyra-ai-${seed}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          } catch (e) {
+            window.open(imageUrl, "_blank");
+          }
+        };
+
+        imageResult.appendChild(downloadBtn);
+        generateImageBtn.disabled = false;
+        generateImageBtn.innerText = "Generate with AI →";
+      };
+
+      img.onerror = () => {
+        imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate image. Please try another prompt.</p>`;
+        generateImageBtn.disabled = false;
+        generateImageBtn.innerText = "Generate with AI →";
+      };
+    });
+  }
+
+  // 5. VIDEO GENERATOR SYSTEM
+  const videoPrompt = document.getElementById("videoPrompt");
+  const generateVideoBtn = document.getElementById("generateVideoBtn");
+  const videoResult = document.getElementById("videoResult");
+
+  if (generateVideoBtn) {
+    generateVideoBtn.addEventListener("click", () => {
+      const prompt = videoPrompt.value.trim();
+      if (!prompt) {
+        alert("Please enter a scene description or script!");
+        return;
+      }
+
+      generateVideoBtn.disabled = true;
+      generateVideoBtn.innerText = "Rendering Scene...";
+      videoResult.innerHTML = `
+        <div style="background: #111827; padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
+          <p style="color: #6366f1; font-weight: 600;">🎬 Video Studio Pipeline Initialized</p>
+          <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Prompt: "${prompt}"</p>
+          <p style="font-size: 13px; color: #cbd5e1; margin-top: 10px;">Rendering high-motion clip... please wait.</p>
         </div>
       `;
-      imageResult.firstElementChild.appendChild(frame);
-      imageResult.firstElementChild.appendChild(downloadBtn);
-    };
 
-    img.onerror = () => {
-      clearInterval(timer);
-      imageResult.innerHTML = `<span style="color:#ef4444;">Generation failed. Please try again.</span>`;
-    };
-  });
-      }
+      setTimeout(() => {
+        generateVideoBtn.disabled = false;
+        generateVideoBtn.innerText = "Generate Video →";
+      }, 4000);
+    });
+  }
+});
+              
