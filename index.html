@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=3100" />
+  <link rel="stylesheet" href="style.css?v=5000" />
 </head>
 <body>
   <div class="app-wrapper">
@@ -13,12 +13,12 @@
       <h1 class="brand-title">Zenvyra AI</h1>
     </header>
 
-    <!-- About Feature Box -->
+    <!-- Features Overview -->
     <section class="about-card">
       <p>⚡ Next-gen all-in-one creative AI studio</p>
-      <p>💬 Intelligent conversation & scripting in Hindi & English</p>
+      <p>💬 Intelligent conversation & scripting assistance</p>
       <p>🎨 High-resolution creative image generation</p>
-      <p>🎙️ 6+ Authentic Indian AI Voices & Instant Audio Download</p>
+      <p>🎙️ Natural AI voice synthesis & direct audio download</p>
       <p>🎬 Instant AI video scene creation from prompts</p>
     </section>
 
@@ -42,20 +42,20 @@
       </button>
     </nav>
 
-    <!-- Interactive Workspace -->
+    <!-- Main Workspace -->
     <main class="workspace">
       <!-- 1. AI CHAT TAB -->
       <div id="chatPage" class="content-page active">
         <div class="card-hero">
           <span class="badge">✦ Zenvyra Assistant</span>
           <h2>How can I help you today?</h2>
-          <p>Type in English or Hindi, or use the voice button below.</p>
+          <p>Type your message or use voice input below.</p>
         </div>
 
         <div id="chatMessages" class="chat-display"></div>
 
         <div class="input-card">
-          <textarea id="chatInput" placeholder="Message Zenvyra AI (English / Hindi)..." rows="3"></textarea>
+          <textarea id="chatInput" placeholder="Message Zenvyra AI..." rows="3"></textarea>
           <div class="button-row">
             <button id="voiceBtn" class="btn-secondary" type="button">🎙️ Voice</button>
             <button id="sendChatBtn" class="btn-primary" type="button">Send →</button>
@@ -84,35 +84,34 @@
         <div id="imageResult" class="result-area"></div>
       </div>
 
-      <!-- 3. AI VOICE GENERATOR (PERMANENT DOWNLOAD BUTTON) -->
+      <!-- 3. AI VOICE GENERATOR TAB -->
       <div id="voicePage" class="content-page" style="display: none;">
         <div class="card-hero">
-          <span class="badge">✦ Indian Neural Audio</span>
-          <h2>Real AI Voice Generator</h2>
-          <p>Choose authentic Indian voices and save directly as Audio.</p>
+          <span class="badge">✦ Neural Voice Studio</span>
+          <h2>AI Voice Generator</h2>
+          <p>Select a voice persona to listen and download audio.</p>
         </div>
 
         <div class="input-card">
-          <textarea id="voiceTextPrompt" placeholder="Yahan Hindi ya English script likhein jise bolna hai..." rows="3"></textarea>
+          <textarea id="voiceTextPrompt" placeholder="Enter the text or script you want the AI to speak..." rows="3"></textarea>
           
           <select id="voiceVoiceSelect" class="ratio-dropdown">
-            <optgroup label="🇮🇳 Authentic Indian Voices">
-              <option value="Aditi">🇮🇳 Aditi (Sweet Hindi Female / Reels)</option>
-              <option value="Kajal">🇮🇳 Kajal (Expressive Indian Female / Stories)</option>
-              <option value="Raveena">🇮🇳 Raveena (Corporate / Professional Female)</option>
-              <option value="hi_male_deep">🇮🇳 Aarav (Deep Hindi Male / Podcast)</option>
-              <option value="hi_male_young">🇮🇳 Kabir (Energetic Young Male)</option>
-              <option value="hi_male_news">🇮🇳 Rajesh (Radio & News Announcer)</option>
+            <optgroup label="Indian Accents">
+              <option value="in_female_soft">Indian Voice - Female (Natural & Soft)</option>
+              <option value="in_female_expressive">Indian Voice - Female (Expressive & Warm)</option>
+              <option value="in_female_pro">Indian Voice - Female (Professional)</option>
+              <option value="in_male_deep">Indian Voice - Male (Deep Narration)</option>
+              <option value="in_male_young">Indian Voice - Male (Youth & Energetic)</option>
+              <option value="in_male_broadcast">Indian Voice - Male (Broadcaster)</option>
             </optgroup>
-            <optgroup label="🌍 Global Voices">
-              <option value="Joanna">🇺🇸 Joanna (American Female)</option>
-              <option value="Matthew">🇺🇸 Matthew (Deep US Male)</option>
-              <option value="Brian">🇬🇧 Brian (British Male)</option>
+            <optgroup label="International Accents">
+              <option value="us_female">US English - Female (Natural)</option>
+              <option value="us_male">US English - Male (Cinematic)</option>
+              <option value="uk_male">UK English - Male (Classic)</option>
             </optgroup>
           </select>
 
-          <!-- Buttons: Dono Saamne Hamesha Visible Honge -->
-          <button id="playVoiceBtn" class="btn-primary full-width" type="button">🎵 Generate Voice Audio →</button>
+          <button id="playVoiceBtn" class="btn-primary full-width" type="button">🔊 Play Voice</button>
           <button id="downloadVoiceBtn" class="btn-secondary full-width" type="button" style="text-align: center; padding: 14px; font-weight: 700; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);">⬇️ Download Audio File</button>
         </div>
 
@@ -137,6 +136,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=3100"></script>
+  <script src="app.js?v=5000"></script>
 </body>
 </html>
