@@ -4,25 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=888" />
+  <link rel="stylesheet" href="style.css?v=900" />
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- 1. TOP TITLE -->
+    <!-- Header Title -->
     <header class="app-header">
       <h1 class="brand-title">Zenvyra AI</h1>
     </header>
 
-    <!-- 2. ABOUT FEATURE BOX -->
+    <!-- About Feature Box -->
     <section class="about-card">
       <p>⚡ Next-gen all-in-one creative AI studio</p>
       <p>💬 Intelligent conversation & scripting in Hindi & English</p>
       <p>🎨 High-resolution creative image generation</p>
+      <p>🎙️ Natural sounding AI Voice generation & playback</p>
       <p>🎬 Instant AI video scene creation from prompts</p>
-      <p>🚀 Powered by modern intelligence for fast creation</p>
     </section>
 
-    <!-- 3. NAVIGATION SWITCHER -->
+    <!-- 4 Navigation Tabs (Added Voice Tab) -->
     <nav class="nav-switcher">
       <button class="nav-btn active" data-page="chat">
         <span class="icon">💬</span>
@@ -30,17 +30,21 @@
       </button>
       <button class="nav-btn" data-page="image">
         <span class="icon">🎨</span>
-        <span class="label">Image Generator</span>
+        <span class="label">Image</span>
+      </button>
+      <button class="nav-btn" data-page="voice">
+        <span class="icon">🎙️</span>
+        <span class="label">AI Voice</span>
       </button>
       <button class="nav-btn" data-page="video">
         <span class="icon">🎬</span>
-        <span class="label">Video Generator</span>
+        <span class="label">Video</span>
       </button>
     </nav>
 
-    <!-- 4. ACTIVE WORKSPACE / INTERACTIVE CARD -->
+    <!-- Interactive Workspace -->
     <main class="workspace">
-      <!-- AI CHAT TAB -->
+      <!-- 1. AI CHAT TAB -->
       <div id="chatPage" class="content-page active">
         <div class="card-hero">
           <span class="badge">✦ Zenvyra Assistant</span>
@@ -59,7 +63,7 @@
         </div>
       </div>
 
-      <!-- IMAGE GENERATOR TAB -->
+      <!-- 2. IMAGE GENERATOR TAB -->
       <div id="imagePage" class="content-page" style="display: none;">
         <div class="card-hero">
           <span class="badge">✦ Flux Studio</span>
@@ -80,7 +84,35 @@
         <div id="imageResult" class="result-area"></div>
       </div>
 
-      <!-- VIDEO GENERATOR TAB -->
+      <!-- 3. AI VOICE GENERATOR TAB -->
+      <div id="voicePage" class="content-page" style="display: none;">
+        <div class="card-hero">
+          <span class="badge">✦ Neural Voice Studio</span>
+          <h2>AI Voice Generator</h2>
+          <p>Enter text or scripts to generate clear natural speech.</p>
+        </div>
+
+        <div class="input-card">
+          <textarea id="voiceTextPrompt" placeholder="Enter text or script you want AI to speak..." rows="3"></textarea>
+          
+          <div class="button-row">
+            <select id="voiceVoiceSelect" class="ratio-dropdown" style="margin-bottom: 0;">
+              <option value="hindi">Hindi Accent (Indian)</option>
+              <option value="english_female">English (Female)</option>
+              <option value="english_male">English (Male)</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button id="playVoiceBtn" class="btn-primary" type="button">🔊 Speak / Generate</button>
+            <button id="stopVoiceBtn" class="btn-secondary" type="button">⏹️ Stop</button>
+          </div>
+        </div>
+
+        <div id="voiceStatus" class="result-area" style="font-size: 14px; color: #94a3b8;"></div>
+      </div>
+
+      <!-- 4. VIDEO GENERATOR TAB -->
       <div id="videoPage" class="content-page" style="display: none;">
         <div class="card-hero">
           <span class="badge">✦ Cinematic AI</span>
@@ -96,13 +128,8 @@
         <div id="videoResult" class="result-area"></div>
       </div>
     </main>
-
-    <!-- 5. BOTTOM BRAND FOOTER (NO EMPTY HOLE) -->
-    <footer class="app-footer">
-      <span>Zenvyra Creative Workspace</span>
-    </footer>
   </div>
 
-  <script src="app.js?v=300"></script>
+  <script src="app.js?v=900"></script>
 </body>
 </html>
