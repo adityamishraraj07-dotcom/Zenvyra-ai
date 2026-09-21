@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=1100" />
+  <link rel="stylesheet" href="style.css?v=1200" />
 </head>
 <body>
   <div class="app-wrapper">
@@ -18,7 +18,7 @@
       <p>⚡ Next-gen all-in-one creative AI studio</p>
       <p>💬 Intelligent conversation & scripting in Hindi & English</p>
       <p>🎨 High-resolution creative image generation</p>
-      <p>🎙️ Real Neural AI Voice & Instant MP3 Download</p>
+      <p>🎙️ 6+ Authentic Indian AI Voices & Direct MP3 Download</p>
       <p>🎬 Instant AI video scene creation from prompts</p>
     </section>
 
@@ -84,40 +84,40 @@
         <div id="imageResult" class="result-area"></div>
       </div>
 
-      <!-- 3. REAL NEURAL AI VOICE TAB -->
+      <!-- 3. REAL INDIAN AI VOICE STUDIO -->
       <div id="voicePage" class="content-page" style="display: none;">
         <div class="card-hero">
-          <span class="badge">✦ Neural Audio Studio</span>
+          <span class="badge">✦ Indian Neural Audio</span>
           <h2>Real AI Voice Generator</h2>
-          <p>Generate distinct human-like voices and download the MP3.</p>
+          <p>Choose authentic Indian voices and save directly as MP3.</p>
         </div>
 
         <div class="input-card">
-          <textarea id="voiceTextPrompt" placeholder="Type script or message to speak in Hindi or English..." rows="3"></textarea>
+          <textarea id="voiceTextPrompt" placeholder="Yahan Hindi ya English script likhein jise bolna hai..." rows="3"></textarea>
           
           <select id="voiceVoiceSelect" class="ratio-dropdown">
-            <optgroup label="🇮🇳 Hindi Voices">
-              <option value="Aditi">🇮🇳 Hindi - Female (Aditi / Sweet)</option>
-              <option value="hi_male">🇮🇳 Hindi - Male (Aarav / Deep)</option>
+            <optgroup label="🇮🇳 Authentic Indian Voices">
+              <option value="Aditi">🇮🇳 Aditi (Sweet Hindi Female / Reels)</option>
+              <option value="Kajal">🇮🇳 Kajal (Expressive Indian Female / Stories)</option>
+              <option value="Raveena">🇮🇳 Raveena (Corporate / Professional Indian Female)</option>
+              <option value="hi_male_deep">🇮🇳 Aarav (Deep Hindi Male / Podcast & Voiceover)</option>
+              <option value="hi_male_young">🇮🇳 Kabir (Energetic Young Male / YouTube)</option>
+              <option value="hi_male_news">🇮🇳 Rajesh (Authoritative Hindi News / Radio)</option>
             </optgroup>
-            <optgroup label="🇺🇸 US English Voices">
-              <option value="Joanna">🇺🇸 English - Joanna (Natural Female)</option>
-              <option value="Matthew">🇺🇸 English - Matthew (Deep Narration Male)</option>
-              <option value="Salli">🇺🇸 English - Salli (Casual Female)</option>
-            </optgroup>
-            <optgroup label="🇬🇧 British English Voices">
-              <option value="Amy">🇬🇧 English - Amy (British Female)</option>
-              <option value="Brian">🇬🇧 English - Brian (British Male Podcast)</option>
+            <optgroup label="🌍 Global Voices">
+              <option value="Joanna">🇺🇸 Joanna (American Female)</option>
+              <option value="Matthew">🇺🇸 Matthew (Deep US Male)</option>
+              <option value="Brian">🇬🇧 Brian (British Male)</option>
             </optgroup>
           </select>
 
           <button id="playVoiceBtn" class="btn-primary full-width" type="button">🎵 Generate Voice Audio →</button>
         </div>
 
-        <!-- Working Audio Player & Download Button -->
+        <!-- Audio Player & Working Blob Download -->
         <div id="audioPlayerContainer" style="margin-top: 14px; width: 100%; display: none; flex-direction: column; gap: 10px;">
           <audio id="realAudioPlayer" controls style="width: 100%; border-radius: 12px; outline: none;"></audio>
-          <a id="downloadVoiceBtn" class="btn-secondary full-width" style="text-align: center; text-decoration: none; padding: 14px; display: block;" download="zenvyra-voice.mp3">⬇️ Download Audio (MP3)</a>
+          <button id="downloadVoiceBtn" class="btn-secondary full-width" type="button" style="text-align: center; padding: 14px; font-weight: 700; cursor: pointer;">⬇️ Download MP3 File</button>
         </div>
 
         <div id="voiceStatus" class="result-area" style="font-size: 14px; color: #94a3b8; margin-top: 6px;"></div>
@@ -141,6 +141,6 @@
     </main>
   </div>
 
-  <script src="app.js?v=1100"></script>
+  <script src="app.js?v=1200"></script>
 </body>
 </html>
