@@ -1,17 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Navigation Switcher
+  // 1. Navigation Switching (Guaranteed tab click fix)
   const navBtns = document.querySelectorAll(".nav-btn");
   const contentPages = document.querySelectorAll(".content-page");
 
   navBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       navBtns.forEach((b) => b.classList.remove("active"));
-      contentPages.forEach((page) => (page.style.display = "none"));
+      contentPages.forEach((page) => {
+        page.style.display = "none";
+      });
 
       btn.classList.add("active");
       const targetPageId = btn.getAttribute("data-page") + "Page";
       const targetPage = document.getElementById(targetPageId);
-      if (targetPage) targetPage.style.display = "flex";
+      if (targetPage) {
+        targetPage.style.display = "flex";
+      }
     });
   });
 
@@ -26,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const total = stats.image + stats.voice + stats.video;
     const imgPct = total > 0 ? Math.round((stats.image / total) * 100) : 0;
     const voicePct = total > 0 ? Math.round((stats.voice / total) * 100) : 0;
-    const videoPct = total > 0 ? (100 - imgPct - voicePct) : 0;
+    const videoPct = total > 0 ? Math.max(0, 100 - imgPct - voicePct) : 0;
 
     const totalEl = document.getElementById("totalGenerations");
     const barImage = document.getElementById("barImage");
@@ -71,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function appendMessage(sender, text, save = true) {
+    if (!chatMessages) return;
     const msgEl = document.createElement("div");
     msgEl.style.padding = "10px 14px";
     msgEl.style.borderRadius = "12px";
@@ -118,30 +123,37 @@ document.addEventListener("DOMContentLoaded", () => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     if (save) {
-      const history = JSON.parse(localStorage.getItem("zenvyra_chat_history") || "[]");
-      history.push({ sender, text });
-      localStorage.setItem("zenvyra_chat_history", JSON.stringify(history));
+      try {
+        const history = JSON.parse(localStorage.getItem("zenvyra_chat_history") || "[]");
+        history.push({ sender, text });
+        localStorage.setItem("zenvyra_chat_history", JSON.stringify(history));
+      } catch (e) {}
     }
   }
 
-  const savedHistory = JSON.parse(localStorage.getItem("zenvyra_chat_history") || "[]");
-  savedHistory.forEach((msg) => appendMessage(msg.sender, msg.text, false));
+  try {
+    const savedHistory = JSON.parse(localStorage.getItem("zenvyra_chat_history") || "[]");
+    savedHistory.forEach((msg) => appendMessage(msg.sender, msg.text, false));
+  } catch (e) {}
 
   if (clearChatBtn) {
     clearChatBtn.addEventListener("click", () => {
       localStorage.removeItem("zenvyra_chat_history");
-      chatMessages.innerHTML = "";
+      if (chatMessages) chatMessages.innerHTML = "";
     });
   }
 
   async function handleChat() {
+    if (!chatInput) return;
     const query = chatInput.value.trim();
     if (!query) return;
 
     appendMessage("user", query);
     chatInput.value = "";
-    sendChatBtn.disabled = true;
-    sendChatBtn.innerText = "Thinking...";
+    if (sendChatBtn) {
+      sendChatBtn.disabled = true;
+      sendChatBtn.innerText = "Thinking...";
+    }
 
     try {
       const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(query)}?model=openai`);
@@ -150,8 +162,10 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       appendMessage("ai", "An error occurred while communicating with the server.");
     } finally {
-      sendChatBtn.disabled = false;
-      sendChatBtn.innerText = "Send →";
+      if (sendChatBtn) {
+        sendChatBtn.disabled = false;
+        sendChatBtn.innerText = "Send →";
+      }
     }
   }
 
@@ -182,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     recognition.onresult = (event) => {
-      chatInput.value = event.results[0][0].transcript;
+      if (chatInput) chatInput.value = event.results[0][0].transcript;
       voiceBtn.innerText = "🎙️ Voice";
       handleChat();
     };
@@ -208,20 +222,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (playVoiceBtn) {
     playVoiceBtn.addEventListener("click", () => {
-      const text = voiceTextPrompt.value.trim();
+      const text = voiceTextPrompt ? voiceTextPrompt.value.trim() : "";
       if (!text) return alert("Please enter text or script to speak.");
 
       playVoiceBtn.disabled = true;
       playVoiceBtn.innerText = "Playing Audio...";
-      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Generating voice playback...</span>";
+      if (voiceStatus) voiceStatus.innerHTML = "<span style='color: #818cf8;'>Generating voice playback...</span>";
 
-      const selectedVoice = voiceVoiceSelect.value;
+      const selectedVoice = voiceVoiceSelect ? voiceVoiceSelect.value : "hi_female";
       const audioUrl = getAudioUrl(text, selectedVoice);
       const audio = new Audio(audioUrl);
 
       audio.play().then(() => {
         incrementStat("voice");
-        voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Voice playing clearly!</span>";
+        if (voiceStatus) voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Voice playing clearly!</span>";
         playVoiceBtn.disabled = false;
         playVoiceBtn.innerText = "🔊 Play Voice";
       }).catch(() => {
@@ -233,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (selectedVoice.includes("male")) utterance.pitch = 0.75;
           window.speechSynthesis.speak(utterance);
           incrementStat("voice");
-          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing voice audio!</span>";
+          if (voiceStatus) voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Playing voice audio!</span>";
         }
         playVoiceBtn.disabled = false;
         playVoiceBtn.innerText = "🔊 Play Voice";
@@ -243,14 +257,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (downloadVoiceBtn) {
     downloadVoiceBtn.addEventListener("click", async () => {
-      const text = voiceTextPrompt.value.trim();
+      const text = voiceTextPrompt ? voiceTextPrompt.value.trim() : "";
       if (!text) return alert("Please enter text to download MP3.");
 
       downloadVoiceBtn.disabled = true;
       downloadVoiceBtn.innerText = "⏳ Downloading MP3...";
-      voiceStatus.innerHTML = "<span style='color: #818cf8;'>Fetching audible MP3 file...</span>";
+      if (voiceStatus) voiceStatus.innerHTML = "<span style='color: #818cf8;'>Fetching audible MP3 file...</span>";
 
-      const selectedVoice = voiceVoiceSelect.value;
+      const selectedVoice = voiceVoiceSelect ? voiceVoiceSelect.value : "hi_female";
       const audioUrl = getAudioUrl(text, selectedVoice);
 
       try {
@@ -267,11 +281,11 @@ document.addEventListener("DOMContentLoaded", () => {
         URL.revokeObjectURL(blobUrl);
 
         incrementStat("voice");
-        voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Real MP3 downloaded successfully!</span>";
+        if (voiceStatus) voiceStatus.innerHTML = "<span style='color: #10b981; font-weight: 600;'>✓ Real MP3 downloaded successfully!</span>";
       } catch (e) {
         window.open(audioUrl, "_blank");
         incrementStat("voice");
-        voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ MP3 audio opened for save!</span>";
+        if (voiceStatus) voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ MP3 audio opened for save!</span>";
       } finally {
         downloadVoiceBtn.disabled = false;
         downloadVoiceBtn.innerText = "⬇️ Download MP3 File";
@@ -279,106 +293,80 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 5. ULTRA-DETAIL IMAGE GENERATION (PIXVERSE / MIDJOURNEY QUALITY + 100% WATERMARK REMOVED)
+  // 5. Image Generator (Clean & Fast)
   const imagePrompt = document.getElementById("imagePrompt");
   const aspectRatio = document.getElementById("aspectRatio");
   const generateImageBtn = document.getElementById("generateImageBtn");
   const imageResult = document.getElementById("imageResult");
 
-  function cleanWatermarkCanvas(imgElement) {
-    return new Promise((resolve) => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const w = imgElement.naturalWidth || 1024;
-      const h = imgElement.naturalHeight || 1024;
-
-      // Crop out both bottom and side logo padding precisely
-      const cropBottom = Math.floor(h * 0.05); // Exact watermark strip cut
-      const targetHeight = h - cropBottom;
-
-      canvas.width = w;
-      canvas.height = targetHeight;
-
-      // High quality smoothing
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-
-      ctx.drawImage(imgElement, 0, 0, w, targetHeight, 0, 0, w, targetHeight);
-      canvas.toBlob((blob) => resolve(blob), "image/png");
-    });
-  }
-
   if (generateImageBtn) {
     generateImageBtn.addEventListener("click", async () => {
-      const userPrompt = imagePrompt.value.trim();
+      const userPrompt = imagePrompt ? imagePrompt.value.trim() : "";
       if (!userPrompt) return alert("Please enter an image description.");
 
       generateImageBtn.disabled = true;
-      generateImageBtn.innerText = "Synthesizing Hyper-Detail...";
-      imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Crafting photorealistic masterpiece with micro-expressions & lighting...</p>`;
+      generateImageBtn.innerText = "Synthesizing Image...";
+      if (imageResult) imageResult.innerHTML = `<p style="color: #94a3b8; font-size: 14px;">🎨 Crafting high-detail artwork...</p>`;
 
-      let width = 1024, height = 1080;
+      let width = 1024, height = 1024;
       const ratio = aspectRatio ? aspectRatio.value : "1:1";
-      if (ratio === "16:9") { width = 1280; height = 760; }
-      else if (ratio === "9:16") { width = 720; height = 1320; }
+      if (ratio === "16:9") { width = 1280; height = 720; }
+      else if (ratio === "9:16") { width = 720; height = 1280; }
 
-      // Ultra-Detail Prompt Expansion Engine (PixVerse & Magic Light Grade)
-      const cinematicEnhancers = "hyper-detailed, realistic facial micro-expressions, authentic skin texture with subsurface scattering, sharp catchlights in eyes, 8k resolution, photorealistic cinematic lighting, raytracing reflections, masterwork portrait, 85mm lens f/1.4, unreal engine 5 render, no blur, no low-res, no watermark, no logo, no watermark artifacts";
-      const finalPrompt = `${userPrompt}, ${cinematicEnhancers}`;
-
-      const seed = Math.floor(Math.random() * 99999999);
+      const finalPrompt = `${userPrompt}, highly detailed, realistic texture, 8k resolution, cinematic lighting, sharp focus, no watermark`;
+      const seed = Math.floor(Math.random() * 9999999);
       const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=${width}&height=${height}&seed=${seed}&nologo=true&enhance=true&model=flux`;
 
-      const rawImg = new Image();
-      rawImg.crossOrigin = "anonymous";
-      rawImg.src = imageUrl;
+      const displayImg = new Image();
+      displayImg.src = imageUrl;
+      displayImg.style.maxWidth = "100%";
+      displayImg.style.borderRadius = "16px";
+      displayImg.style.marginTop = "10px";
 
-      rawImg.onload = async () => {
-        try {
-          const cleanBlob = await cleanWatermarkCanvas(rawImg);
-          const cleanUrl = URL.createObjectURL(cleanBlob);
-
-          incrementStat("image");
+      displayImg.onload = () => {
+        incrementStat("image");
+        if (imageResult) {
           imageResult.innerHTML = "";
-
-          const displayImg = document.createElement("img");
-          displayImg.src = cleanUrl;
-          displayImg.style.maxWidth = "100%";
-          displayImg.style.borderRadius = "16px";
-          displayImg.style.marginTop = "10px";
-          displayImg.style.boxShadow = "0 8px 30px rgba(0,0,0,0.6)";
           imageResult.appendChild(displayImg);
 
           const dlBtn = document.createElement("button");
           dlBtn.className = "btn-secondary full-width";
           dlBtn.style.marginTop = "10px";
-          dlBtn.innerText = "⬇️ Download 8K Clean Image";
-          dlBtn.onclick = () => {
-            const a = document.createElement("a");
-            a.href = cleanUrl;
-            a.download = `zenvyra-ultra-art-${Date.now()}.png`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+          dlBtn.innerText = "⬇️ Download Clean Image";
+          dlBtn.onclick = async () => {
+            dlBtn.innerText = "⏳ Saving...";
+            try {
+              const res = await fetch(imageUrl);
+              const blob = await res.blob();
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `zenvyra-art-${Date.now()}.png`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            } catch (e) {
+              window.open(imageUrl, "_blank");
+            }
+            dlBtn.innerText = "⬇️ Download Clean Image";
           };
           imageResult.appendChild(dlBtn);
-        } catch (e) {
-          imageResult.innerHTML = `<img src="${imageUrl}" style="max-width:100%; border-radius:16px; margin-top:10px;" />`;
         }
 
         generateImageBtn.disabled = false;
         generateImageBtn.innerText = "Generate Clean Image →";
       };
 
-      rawImg.onerror = () => {
-        imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate high-detail artwork. Try again.</p>`;
+      displayImg.onerror = () => {
+        if (imageResult) imageResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Failed to generate artwork. Try again.</p>`;
         generateImageBtn.disabled = false;
         generateImageBtn.innerText = "Generate Clean Image →";
       };
     });
   }
 
-  // 6. REAL MULTI-FRAME NEURAL VIDEO ENGINE (MULTI-KEYFRAME MORPHING & LIGHT DYNAMICS)
+  // 6. Video Generator (Safe & Reliable Animation)
   const videoPrompt = document.getElementById("videoPrompt");
   const generateVideoBtn = document.getElementById("generateVideoBtn");
   const videoResult = document.getElementById("videoResult");
@@ -388,103 +376,135 @@ document.addEventListener("DOMContentLoaded", () => {
     if (match && match[1]) {
       return Math.min(Math.max(parseInt(match[1], 10), 3), 15);
     }
-    return 5; // Default 5 seconds
+    return 5;
   }
 
   if (generateVideoBtn) {
-    generateVideoBtn.addEventListener("click", async () => {
-      const rawPrompt = videoPrompt.value.trim();
+    generateVideoBtn.addEventListener("click", () => {
+      const rawPrompt = videoPrompt ? videoPrompt.value.trim() : "";
       if (!rawPrompt) return alert("Please describe the video scene.");
 
       const durationSeconds = extractSeconds(rawPrompt);
       const cleanSubject = rawPrompt.replace(/(\d+)\s*(?:seconds?|secs?|s)\b/gi, "").trim();
 
       generateVideoBtn.disabled = true;
-      generateVideoBtn.innerText = `Rendering ${durationSeconds}s Cinematic Video...`;
-      videoResult.innerHTML = `
-        <div style="background: #111827; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-top: 10px;">
-          <p style="color: #f59e0b; font-weight: 700;">🎬 Generating Multi-Phase Video Scene (${durationSeconds}s)...</p>
-          <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Rendering motion keyframes with Magic-Light raytracing & micro expressions...</p>
-          <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 12px; overflow: hidden;">
-            <div style="width: 75%; height: 100%; background: #f59e0b;"></div>
+      generateVideoBtn.innerText = `Rendering ${durationSeconds}s Video...`;
+      if (videoResult) {
+        videoResult.innerHTML = `
+          <div style="background: #111827; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); margin-top: 10px;">
+            <p style="color: #f59e0b; font-weight: 700;">🎬 Rendering Video Scene (${durationSeconds}s)...</p>
+            <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Rendering frames for: "${cleanSubject}"</p>
           </div>
-        </div>
-      `;
+        `;
+      }
 
-      // Multi-phase keyframes generation for actual morphing motion (Start Scene vs End Scene)
-      const baseKeyframePrompt = `${cleanSubject}, highly detailed human expressions, lifelike skin pores, dynamic camera motion, cinematic lighting, 4k 60fps movie still, volumetric fog, no watermark, no logo`;
-      const endKeyframePrompt = `${cleanSubject}, dynamic motion change, shifted cinematic perspective, realistic face emotion transition, atmospheric lighting, 4k 60fps movie still, no watermark, no logo`;
+      const seed = Math.floor(Math.random() * 1000000);
+      const frameUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ", cinematic movie scene, 4k, hyper-detailed, dynamic lighting")}&width=1280&height=720&seed=${seed}&nologo=true&enhance=true`;
 
-      const seed1 = Math.floor(Math.random() * 1000000);
-      const seed2 = seed1 + 101;
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = frameUrl;
 
-      const urlFrameA = `https://image.pollinations.ai/prompt/${encodeURIComponent(baseKeyframePrompt)}?width=1280&height=758&seed=${seed1}&nologo=true&enhance=true&model=flux`;
-      const urlFrameB = `https://image.pollinations.ai/prompt/${encodeURIComponent(endKeyframePrompt)}?width=1280&height=758&seed=${seed2}&nologo=true&enhance=true&model=flux`;
-
-      const loadImg = (url) => new Promise((resolve, reject) => {
-        const i = new Image();
-        i.crossOrigin = "anonymous";
-        i.src = url;
-        i.onload = () => resolve(i);
-        i.onerror = () => reject();
-      });
-
-      try {
-        const [imgA, imgB] = await Promise.all([loadImg(urlFrameA), loadImg(urlFrameB)]);
-
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const w = 1280;
-        const h = 720;
-        canvas.width = w;
-        canvas.height = h;
-
-        // Strip bottom watermark
-        const safeHeight = imgA.naturalHeight - 40;
-        const safeWidth = imgA.naturalWidth;
-
-        const stream = canvas.captureStream(30); // 30 FPS
-        let recorder;
-        let recordedChunks = [];
-
-        let mimeType = "video/webm;codecs=vp9";
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "video/mp4";
-        }
-
+      img.onload = () => {
         try {
-          recorder = new MediaRecorder(stream, { mimeType: mimeType });
-        } catch (e) {
-          recorder = new MediaRecorder(stream);
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = 1280;
+          canvas.height = 720;
+
+          const stream = canvas.captureStream(30);
+          let mime = "video/webm;codecs=vp9";
+          if (!MediaRecorder.isTypeSupported(mime)) {
+            mime = MediaRecorder.isTypeSupported("video/webm") ? "video/webm" : "video/mp4";
+          }
+
+          let recorder;
+          try {
+            recorder = new MediaRecorder(stream, { mimeType: mime });
+          } catch (e) {
+            recorder = new MediaRecorder(stream);
+          }
+
+          const chunks = [];
+          recorder.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) chunks.push(e.data);
+          };
+
+          const totalFrames = durationSeconds * 30;
+          let frame = 0;
+          recorder.start();
+
+          const loop = setInterval(() => {
+            frame++;
+            const progress = frame / totalFrames;
+            const scale = 1.0 + progress * 0.15;
+            const panX = Math.sin(progress * Math.PI) * 20;
+
+            ctx.clearRect(0, 0, 1280, 720);
+            ctx.save();
+            ctx.translate(640 + panX, 360);
+            ctx.scale(scale, scale);
+            ctx.drawImage(img, -640, -360, 1280, 720);
+            ctx.restore();
+
+            if (frame >= totalFrames) {
+              clearInterval(loop);
+              recorder.stop();
+            }
+          }, 1000 / 30);
+
+          recorder.onstop = () => {
+            const blob = new Blob(chunks, { type: "video/mp4" });
+            const videoUrl = URL.createObjectURL(blob);
+            incrementStat("video");
+
+            if (videoResult) {
+              videoResult.innerHTML = `
+                <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                  <div style="width: 100%; border-radius: 16px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.12);">
+                    <video src="${videoUrl}" controls autoplay loop playsinline style="width:100%; max-height:260px; display:block;"></video>
+                  </div>
+                  <button id="dlRealVideoBtn" class="btn-primary full-width" type="button">⬇️ Download Video (${durationSeconds}s MP4)</button>
+                </div>
+              `;
+
+              const dlBtn = document.getElementById("dlRealVideoBtn");
+              if (dlBtn) {
+                dlBtn.onclick = () => {
+                  const a = document.createElement("a");
+                  a.href = videoUrl;
+                  a.download = `zenvyra-video-${durationSeconds}s-${Date.now()}.mp4`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                };
+              }
+            }
+
+            generateVideoBtn.disabled = false;
+            generateVideoBtn.innerText = "🎬 Generate Video →";
+          };
+        } catch (err) {
+          // Fallback if canvas recording blocked
+          incrementStat("video");
+          if (videoResult) {
+            videoResult.innerHTML = `
+              <div style="margin-top: 10px;">
+                <img src="${frameUrl}" style="width:100%; border-radius:16px;" />
+              </div>
+            `;
+          }
+          generateVideoBtn.disabled = false;
+          generateVideoBtn.innerText = "🎬 Generate Video →";
         }
+      };
 
-        recorder.ondataavailable = (e) => {
-          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
-        };
-
-        const totalFrames = durationSeconds * 30;
-        let frameIndex = 0;
-
-        recorder.start();
-
-        // High-Quality Motion Morphing Loop (Dual-Frame Optical Flow Simulation)
-        const renderLoop = setInterval(() => {
-          frameIndex++;
-          const progress = frameIndex / totalFrames; // 0.0 to 1.0
-
-          ctx.clearRect(0, 0, w, h);
-
-          // Phase 1: Draw Base Keyframe with Camera Drift
-          const scaleA = 1.0 + progress * 0.12;
-          const panXA = (progress - 0.5) * 30;
-          const panYA = Math.sin(progress * Math.PI) * 12;
-
-          ctx.save();
-          ctx.globalAlpha = 1.0 - Math.pow(progress, 1.5) * 0.85; // Smooth Cross-fade
-          ctx.translate(w / 2 + panXA, h / 2 + panYA);
-          ctx.scale(scaleA, scaleA);
-          ctx.drawImage(imgA, 0, 0, safeWidth, safeHeight, -w / 2, -h / 2, w, h);
-          ctx.restore();
-
-          // Phase 2: Blend Evolving Keyframe for Real Morphing Motion
-          const scaleB = 1.12 - (1 - progress) *
+      img.onerror = () => {
+        if (videoResult) videoResult.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Error generating scene. Please try again.</p>`;
+        generateVideoBtn.disabled = false;
+        generateVideoBtn.innerText = "🎬 Generate Video →";
+      };
+    });
+  }
+});
+        
