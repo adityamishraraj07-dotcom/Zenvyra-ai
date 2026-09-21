@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zenvyra AI</title>
-  <link rel="stylesheet" href="style.css?v=1200" />
+  <link rel="stylesheet" href="style.css?v=3100" />
 </head>
 <body>
   <div class="app-wrapper">
@@ -18,7 +18,7 @@
       <p>⚡ Next-gen all-in-one creative AI studio</p>
       <p>💬 Intelligent conversation & scripting in Hindi & English</p>
       <p>🎨 High-resolution creative image generation</p>
-      <p>🎙️ 6+ Authentic Indian AI Voices & Direct MP3 Download</p>
+      <p>🎙️ 6+ Authentic Indian AI Voices & Instant Audio Download</p>
       <p>🎬 Instant AI video scene creation from prompts</p>
     </section>
 
@@ -84,12 +84,12 @@
         <div id="imageResult" class="result-area"></div>
       </div>
 
-      <!-- 3. REAL INDIAN AI VOICE STUDIO -->
+      <!-- 3. AI VOICE GENERATOR (PERMANENT DOWNLOAD BUTTON) -->
       <div id="voicePage" class="content-page" style="display: none;">
         <div class="card-hero">
           <span class="badge">✦ Indian Neural Audio</span>
           <h2>Real AI Voice Generator</h2>
-          <p>Choose authentic Indian voices and save directly as MP3.</p>
+          <p>Choose authentic Indian voices and save directly as Audio.</p>
         </div>
 
         <div class="input-card">
@@ -99,10 +99,10 @@
             <optgroup label="🇮🇳 Authentic Indian Voices">
               <option value="Aditi">🇮🇳 Aditi (Sweet Hindi Female / Reels)</option>
               <option value="Kajal">🇮🇳 Kajal (Expressive Indian Female / Stories)</option>
-              <option value="Raveena">🇮🇳 Raveena (Corporate / Professional Indian Female)</option>
-              <option value="hi_male_deep">🇮🇳 Aarav (Deep Hindi Male / Podcast & Voiceover)</option>
-              <option value="hi_male_young">🇮🇳 Kabir (Energetic Young Male / YouTube)</option>
-              <option value="hi_male_news">🇮🇳 Rajesh (Authoritative Hindi News / Radio)</option>
+              <option value="Raveena">🇮🇳 Raveena (Corporate / Professional Female)</option>
+              <option value="hi_male_deep">🇮🇳 Aarav (Deep Hindi Male / Podcast)</option>
+              <option value="hi_male_young">🇮🇳 Kabir (Energetic Young Male)</option>
+              <option value="hi_male_news">🇮🇳 Rajesh (Radio & News Announcer)</option>
             </optgroup>
             <optgroup label="🌍 Global Voices">
               <option value="Joanna">🇺🇸 Joanna (American Female)</option>
@@ -111,13 +111,9 @@
             </optgroup>
           </select>
 
+          <!-- Buttons: Dono Saamne Hamesha Visible Honge -->
           <button id="playVoiceBtn" class="btn-primary full-width" type="button">🎵 Generate Voice Audio →</button>
-        </div>
-
-        <!-- Audio Player & Working Blob Download -->
-        <div id="audioPlayerContainer" style="margin-top: 14px; width: 100%; display: none; flex-direction: column; gap: 10px;">
-          <audio id="realAudioPlayer" controls style="width: 100%; border-radius: 12px; outline: none;"></audio>
-          <button id="downloadVoiceBtn" class="btn-secondary full-width" type="button" style="text-align: center; padding: 14px; font-weight: 700; cursor: pointer;">⬇️ Download MP3 File</button>
+          <button id="downloadVoiceBtn" class="btn-secondary full-width" type="button" style="text-align: center; padding: 14px; font-weight: 700; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);">⬇️ Download Audio File</button>
         </div>
 
         <div id="voiceStatus" class="result-area" style="font-size: 14px; color: #94a3b8; margin-top: 6px;"></div>
@@ -141,6 +137,6 @@
     </main>
   </div>
 
-    <script src="app.js?v=2500"></script>
+  <script src="app.js?v=3100"></script>
 </body>
 </html>
