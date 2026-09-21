@@ -12,7 +12,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Central Mobile Container */
 .app-wrapper {
   min-height: 100vh;
   display: flex;
@@ -25,7 +24,6 @@ html, body {
   gap: 16px;
 }
 
-/* Header */
 .app-header {
   text-align: center;
   width: 100%;
@@ -111,7 +109,7 @@ html, body {
 .dot-voice { background: #a855f7; }
 .dot-video { background: #f59e0b; }
 
-/* About Feature Card */
+/* About Box */
 .about-card {
   width: 100%;
   background: #111827;
@@ -130,7 +128,7 @@ html, body {
   font-weight: 500;
 }
 
-/* Nav Switch Tabs */
+/* Nav Switch */
 .nav-switcher {
   display: flex;
   gap: 8px;
@@ -305,7 +303,7 @@ textarea {
   font-size: 13.5px;
 }
 
-/* Chat Action Buttons */
+/* Chat Buttons */
 .chat-action-bar {
   display: flex;
   gap: 6px;
@@ -321,3 +319,21 @@ textarea {
   color: #ffffff;
   cursor: pointer;
 }
+
+/* Video Player Container */
+.video-render-box {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+}
+
+.video-render-box video {
+  width: 100%;
+  max-height: 260px;
+  display: block;
+  object-fit: cover;
+  }
+  
