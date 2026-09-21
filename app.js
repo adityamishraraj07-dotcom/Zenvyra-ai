@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     recognition.onend = () => { voiceBtn.innerText = "🎙️ Voice"; };
   }
 
-  // 4. REAL AI VOICE GENERATION & MP3 DOWNLOAD (StreamElements Amazon Polly Engine)
+  // 4. REAL AI VOICE GENERATION & WORKING DIRECT MP3 DOWNLOAD
   const voiceTextPrompt = document.getElementById("voiceTextPrompt");
   const voiceVoiceSelect = document.getElementById("voiceVoiceSelect");
   const playVoiceBtn = document.getElementById("playVoiceBtn");
@@ -115,6 +115,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const audioPlayerContainer = document.getElementById("audioPlayerContainer");
   const downloadVoiceBtn = document.getElementById("downloadVoiceBtn");
   const voiceStatus = document.getElementById("voiceStatus");
+
+  let currentAudioUrl = "";
 
   if (playVoiceBtn) {
     playVoiceBtn.addEventListener("click", () => {
@@ -129,16 +131,14 @@ document.addEventListener("DOMContentLoaded", () => {
       playVoiceBtn.innerText = "Generating Audio...";
       voiceStatus.innerHTML = "<span style='color: #818cf8;'>Synthesizing voice audio...</span>";
 
-      // Real Neural Voice MP3 Stream (CORS-friendly, genuine accents)
       let voiceName = voice;
       if (voice === "hi_male") {
-        voiceName = "Aditi"; // High quality Indian English/Hindi
+        voiceName = "Aditi";
       }
 
-      const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=${encodeURIComponent(voiceName)}&text=${encodeURIComponent(text)}`;
+      currentAudioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=${encodeURIComponent(voiceName)}&text=${encodeURIComponent(text)}`;
 
-      realAudioPlayer.src = audioUrl;
-      downloadVoiceBtn.href = audioUrl;
+      realAudioPlayer.src = currentAudioUrl;
       audioPlayerContainer.style.display = "flex";
 
       realAudioPlayer.oncanplay = () => {
@@ -149,20 +149,45 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       realAudioPlayer.onerror = () => {
-        // Safe fallback to native engine if network stalls
-        if ("speechSynthesis" in window) {
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(text);
-          if (voice.includes("hi")) utterance.lang = "hi-IN";
-          else utterance.lang = "en-US";
-          window.speechSynthesis.speak(utterance);
-          voiceStatus.innerHTML = "<span style='color: #10b981;'>✓ Voice played!</span>";
-        } else {
-          voiceStatus.innerHTML = "<span style='color: #ef4444;'>Audio generation failed. Try again.</span>";
-        }
+        voiceStatus.innerHTML = "<span style='color: #ef4444;'>Audio generation failed. Try again.</span>";
         playVoiceBtn.disabled = false;
         playVoiceBtn.innerText = "🎵 Generate Voice Audio →";
       };
+    });
+  }
+
+  // DIRECT BLOB DOWNLOAD HANDLER (Fixes mobile & browser download)
+  if (downloadVoiceBtn) {
+    downloadVoiceBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!currentAudioUrl) return;
+
+      const originalText = downloadVoiceBtn.innerText;
+      downloadVoiceBtn.innerText = "⏳ Downloading MP3...";
+
+      try {
+        const response = await fetch(currentAudioUrl);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const tempLink = document.createElement("a");
+        tempLink.style.display = "none";
+        tempLink.href = blobUrl;
+        tempLink.download = `zenvyra-voice-${Date.now()}.mp3`;
+
+        document.body.appendChild(tempLink);
+        tempLink.click();
+
+        setTimeout(() => {
+          document.body.removeChild(tempLink);
+          window.URL.revokeObjectURL(blobUrl);
+          downloadVoiceBtn.innerText = originalText;
+        }, 1000);
+      } catch (err) {
+        // Direct fallback window open
+        window.open(currentAudioUrl, "_blank");
+        downloadVoiceBtn.innerText = originalText;
+      }
     });
   }
 
